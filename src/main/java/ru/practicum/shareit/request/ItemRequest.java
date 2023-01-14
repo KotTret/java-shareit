@@ -1,7 +1,19 @@
 package ru.practicum.shareit.request;
 
-/**
- * TODO Sprint add-item-requests.
- */
+import lombok.*;
+
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class ItemRequest {
+
+    private Integer idRequest;
+
+    private Integer idUser;
+
+    private String name;
+
+    private Integer responseItemId;
 }
