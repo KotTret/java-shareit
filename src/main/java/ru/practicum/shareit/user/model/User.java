@@ -21,7 +21,7 @@ import java.util.List;
 @Builder
 public class User {
     @NotNull(groups = Update.class)
-    private Integer idUser;
+    private Integer userId;
 
     @NotNull
     @Email(message = "Формат электронной почты указан неверно.")
