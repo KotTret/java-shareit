@@ -7,7 +7,8 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import ru.practicum.shareit.exception.controller.model.ErrorResponse;
+import ru.practicum.shareit.exception.model.ErrorResponse;
+import ru.practicum.shareit.exception.model.ValidationException;
 
 import java.util.List;
 
@@ -29,6 +30,17 @@ public class ErrorHandler {
                 errorMessage.toString()
         );
     }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.CONFLICT)
+    public ErrorResponse handleValidationException(final ValidationException e) {
+        log.info("409 {}", e.getMessage());
+
+        return new ErrorResponse(
+                e.getMessage()
+        );
+    }
+
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)

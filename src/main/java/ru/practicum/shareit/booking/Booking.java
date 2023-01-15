@@ -2,29 +2,30 @@ package ru.practicum.shareit.booking;
 
 import lombok.*;
 
+import java.io.Serializable;
 import java.time.Duration;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Getter
 @Setter
-@NoArgsConstructor
 @AllArgsConstructor
 @Builder
 public class Booking {
 
-    private Integer idBooking;
+    private Integer bookingId;
 
-    private LocalDate startDate;
+    private LocalDateTime startDate;
 
     private Duration duration;
 
-    private LocalDate endDate;
+    private LocalDateTime endDate;
 
     private Integer ownerId;
 
-    private Integer tenantId;
+    private Integer bookerId;
 
     private Integer itemId;
 
-    private boolean isConfirmFromOwner;
+    private Status status;
 }

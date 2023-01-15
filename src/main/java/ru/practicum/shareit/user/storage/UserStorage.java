@@ -17,4 +17,7 @@ public interface UserStorage {
     void delete(Integer userId);
 
     boolean containsId(Integer id);
+
+    boolean containsEmail(String email);
+
 }
