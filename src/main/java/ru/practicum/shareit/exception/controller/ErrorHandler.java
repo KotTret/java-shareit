@@ -4,10 +4,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.MissingRequestHeaderException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import ru.practicum.shareit.exception.model.ErrorResponse;
+import ru.practicum.shareit.exception.model.ObjectNotFoundException;
 import ru.practicum.shareit.exception.model.ValidationException;
 
 import java.util.List;
@@ -22,12 +24,29 @@ public class ErrorHandler {
         log.info("400 {}", e.getMessage());
         List<ObjectError> allErrors = e.getBindingResult().getAllErrors();
         StringBuilder errorMessage = new StringBuilder();
-        for( ObjectError error : allErrors )
-        {
+        for (ObjectError error : allErrors) {
             errorMessage.append(error.getDefaultMessage()).append(System.lineSeparator());
         }
         return new ErrorResponse(
                 errorMessage.toString()
+        );
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse handleMissingRequestHeaderException(final MissingRequestHeaderException e) {
+        log.info("400 {}", e.getMessage());
+        return new ErrorResponse(
+                e.getMessage()
+        );
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ErrorResponse handleObjectNotFoundException(final ObjectNotFoundException e) {
+        log.info("404 {}", e.getMessage());
+        return new ErrorResponse(
+                e.getMessage()
         );
     }
 
@@ -45,7 +64,7 @@ public class ErrorHandler {
     @ExceptionHandler
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ErrorResponse handleRuntimeException(final Throwable e) {
-        log.warn("500 {}", e.getMessage());
+        log.warn("500 {}", e.getMessage(), e);
         return new ErrorResponse(
                 "Непредвиденная ошибка"
         );

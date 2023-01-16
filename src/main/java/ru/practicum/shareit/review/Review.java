@@ -1,8 +1,8 @@
 package ru.practicum.shareit.review;
 
 import lombok.*;
-import ru.practicum.shareit.valodation.Create;
-import ru.practicum.shareit.valodation.Update;
+import ru.practicum.shareit.util.validation.Create;
+import ru.practicum.shareit.util.validation.Update;
 
 import javax.validation.constraints.NotNull;
 

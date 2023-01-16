@@ -1,6 +1,6 @@
 package ru.practicum.shareit.exception.model;
 
-public class ObjectNotFoundException extends RuntimeException{
+public class ObjectNotFoundException extends RuntimeException {
 
     public ObjectNotFoundException() {
     }

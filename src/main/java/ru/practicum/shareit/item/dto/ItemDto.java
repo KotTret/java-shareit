@@ -3,10 +3,12 @@ package ru.practicum.shareit.item.dto;
 import lombok.*;
 
 @Getter
+@Setter
 @AllArgsConstructor
+@NoArgsConstructor
 public class ItemDto {
 
-    private Integer itemId;
+    private Integer id;
 
     private String name;
 
@@ -14,11 +16,9 @@ public class ItemDto {
 
     private Integer ownerId;
 
-    private boolean isBooked;
+    private Boolean available;
 
     private int numberOfBookings;
 
     private Integer requestId;
 }
-
-

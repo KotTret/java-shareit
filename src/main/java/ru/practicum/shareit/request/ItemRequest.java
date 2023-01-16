@@ -18,5 +18,5 @@ public class ItemRequest {
 
     private Integer responseItemId;
 
-    private LocalDateTime Date;
+    private LocalDateTime date;
 }

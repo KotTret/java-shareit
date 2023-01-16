@@ -2,11 +2,7 @@ package ru.practicum.shareit.booking.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
-import lombok.Setter;
-
-import java.io.Serializable;
 import java.time.Duration;
 import java.time.LocalDate;
 
