@@ -1,7 +1,7 @@
 package ru.practicum.shareit.user.model;
 
 import lombok.*;
-import ru.practicum.shareit.valodation.Create;
+import ru.practicum.shareit.util.validation.Create;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
@@ -14,7 +14,7 @@ public class User {
 
     private Integer id;
 
-    @NotNull(groups = Create.class)
+    @NotNull
     @Email(message = "Формат электронной почты указан неверно.")
     private String email;
 

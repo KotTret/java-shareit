@@ -4,13 +4,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.storage.ItemStorage;
-import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.util.generator.IdGenerator;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Component
 @RequiredArgsConstructor
@@ -21,7 +18,13 @@ public class InMemoryItemStorage implements ItemStorage {
 
     @Override
     public List<Item> getAll(Integer userId) {
-        return new ArrayList<>(items.values());
+        if (userId == null) {
+            return new ArrayList<>(items.values());
+        } else {
+            return items.values()
+                    .stream()
+                    .filter(o -> Objects.equals(o.getOwnerId(), userId)).collect(Collectors.toList());
+        }
     }
 
     @Override
@@ -31,13 +34,13 @@ public class InMemoryItemStorage implements ItemStorage {
 
     @Override
     public void add(Item item) {
-        item.setItemId(idGenerator.getId());
-        items.put(item.getItemId(), item);
+        item.setId(idGenerator.getId());
+        items.put(item.getId(), item);
     }
 
     @Override
     public void update(Item item) {
-        items.put(item.getItemId(), item);
+        items.put(item.getId(), item);
     }
 
     @Override
@@ -45,4 +48,13 @@ public class InMemoryItemStorage implements ItemStorage {
         return items.containsKey(id);
     }
 
+    @Override
+    public List<Item> search(String text) {
+        return items.values()
+                .stream()
+                .filter(o -> (o.getName().toLowerCase().contains(text.toLowerCase())
+                        || o.getDescription().toLowerCase().contains(text.toLowerCase()))
+                        && o.getAvailable().equals(Boolean.TRUE))
+                .collect(Collectors.toList());
+    }
 }

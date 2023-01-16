@@ -7,13 +7,15 @@ import java.util.List;
 
 public interface ItemService {
 
+
     List<Item> getAll(Integer userId);
 
     Item get(Integer itemId);
 
     Item create(Integer userId, Item item);
 
-    Item update(Integer userId, Item item);
+    Item update(Integer userId, Integer itemId, ItemDto itemDto);
 
-   // List<Item> search(String query, String [] searchBy);
+    List<Item> search(String text);
+
 }

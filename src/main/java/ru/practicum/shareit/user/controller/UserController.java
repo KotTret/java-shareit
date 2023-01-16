@@ -18,9 +18,9 @@ import java.util.stream.Collectors;
 @RequestMapping(path = "/users")
 public class UserController {
 
-    private  final UserService userService;
+    private final UserService userService;
 
-    private  final UserMapper userMapper;
+    private final UserMapper userMapper;
 
     @GetMapping
     public List<UserDto> getAll() {
@@ -31,16 +31,17 @@ public class UserController {
     }
 
     @GetMapping("/{userId}")
-    public UserDto get(@PathVariable Integer userId) {
-        return userMapper.toDto(userService.get(userId));
+    public ResponseEntity<UserDto> get(@PathVariable Integer userId) {
+        return new ResponseEntity<>(userMapper.toDto(userService.get(userId)), HttpStatus.OK);
     }
 
     @PostMapping
-    public UserDto create(@Valid @RequestBody User user)  {
-        return userMapper.toDto(userService.create(user));
+    public ResponseEntity<UserDto> create(@Valid @RequestBody User user) {
+        return new ResponseEntity<>(userMapper.toDto(userService.create(user)), HttpStatus.OK);
     }
+
     @PatchMapping("/{userId}")
-    public ResponseEntity<UserDto> update(@Valid @RequestBody UserDto userDto, @PathVariable Integer userId) {
+    public ResponseEntity<UserDto> update(@RequestBody UserDto userDto, @PathVariable Integer userId) {
         return new ResponseEntity<>(userMapper.toDto(userService.update(userId, userDto)), HttpStatus.OK);
     }
 

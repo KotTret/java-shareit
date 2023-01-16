@@ -2,9 +2,7 @@ package ru.practicum.shareit.booking;
 
 import lombok.*;
 
-import java.io.Serializable;
 import java.time.Duration;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Getter

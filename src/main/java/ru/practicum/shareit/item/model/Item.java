@@ -1,9 +1,6 @@
 package ru.practicum.shareit.item.model;
 
 import lombok.*;
-import ru.practicum.shareit.request.ItemRequest;
-import ru.practicum.shareit.user.model.User;
-import ru.practicum.shareit.valodation.Update;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -11,12 +8,13 @@ import javax.validation.constraints.Size;
 
 @Getter
 @Setter
+@NoArgsConstructor
 @AllArgsConstructor
 @Builder
 public class Item {
 
-    @NotNull(groups = Update.class)
-    private Integer itemId;
+
+    private Integer id;
 
     @NotBlank(message = "Название не может быть пустым.")
     private String name;
@@ -25,10 +23,10 @@ public class Item {
     @Size(max = 200, message = "Максимальная длина описания  — 200 символов.")
     private String description;
 
-    @NotBlank
-    private Integer ownerId;
 
-    private boolean isBooked;
+    private Integer ownerId;
+    @NotNull
+    private Boolean available;
 
     private int numberOfBookings;
 
