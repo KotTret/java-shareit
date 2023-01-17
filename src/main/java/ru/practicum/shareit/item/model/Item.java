@@ -13,19 +13,17 @@ import javax.validation.constraints.Size;
 @Builder
 public class Item {
 
-
     private Integer id;
 
-    @NotBlank(message = "Название не может быть пустым.")
+
     private String name;
 
-    @NotBlank
-    @Size(max = 200, message = "Максимальная длина описания  — 200 символов.")
+
     private String description;
 
 
     private Integer ownerId;
-    @NotNull
+
     private Boolean available;
 
     private int numberOfBookings;

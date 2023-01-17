@@ -20,7 +20,6 @@ public class UserServiceImpl implements UserService {
 
     private final UserStorage userStorage;
 
-
     @Override
     public List<User> getAll() {
         List<User> users = userStorage.getAll();
@@ -30,8 +29,8 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User get(Integer userId) {
-        checkUser(userId);
-        User user = userStorage.get(userId);
+        User user = userStorage.get(userId)
+                .orElseThrow(() -> new ObjectNotFoundException("Пользователь не найден, проверьте верно ли указан Id"));
         log.info("Запрошена информация о пользователе: {}", user.getEmail());
         return user;
     }
@@ -46,29 +45,20 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User update(Integer userId, UserDto userDto) {
-        checkUser(userId);
         if (userDto.getEmail() != null) {
             checkEmail(userDto.getEmail());
         }
         userDto.setId(userId);
-        User user = userStorage.get(userId);
+        User user = get(userId);
         UtilMergeProperty.copyProperties(userDto, user);
         userStorage.update(user);
-
         log.info("Информация о пользователе обновлена: {}", user.getEmail());
         return user;
     }
 
     @Override
     public void delete(Integer userId) {
-        checkUser(userId);
         userStorage.delete(userId);
-    }
-
-    private void checkUser(Integer id) {
-        if (!userStorage.containsId(id)) {
-            throw new ObjectNotFoundException("Пользователь не найден, проверьте верно ли указан Id");
-        }
     }
 
     private void checkEmail(String email) {

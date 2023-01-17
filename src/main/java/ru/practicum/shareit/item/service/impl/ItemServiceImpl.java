@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.exception.model.ObjectNotFoundException;
+import ru.practicum.shareit.exception.model.ValidationException;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.service.ItemService;
@@ -27,14 +28,14 @@ public class ItemServiceImpl implements ItemService {
     @Override
     public List<Item> getAll(Integer userId) {
         List<Item> items = itemStorage.getAll(userId);
-        log.info("Текущее количество вещей у пользователя - {}: {}", userId, items.size());
+        log.info("Запрошено количество вещей у - {}", items.size());
         return items;
     }
 
     @Override
     public Item get(Integer itemId) {
-        checkItem(itemId);
-        Item item = itemStorage.get(itemId);
+        Item item = itemStorage.get(itemId).orElseThrow(() -> new ObjectNotFoundException("Item не найден, " +
+                "проверьте верно ли указан Id"));
         log.info("Запрошена информация о Item:name - {}, id - {}", item.getName(), item.getId());
         return item;
     }
@@ -49,10 +50,10 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public Item update(Integer userId, Integer itemId, ItemDto itemdto) {
+    public Item update(Integer userId, Integer itemId, ItemDto itemDto) {
         checkItemForUser(userId, itemId);
         Item item = get(itemId);
-        UtilMergeProperty.copyProperties(itemdto, item);
+        UtilMergeProperty.copyProperties(itemDto, item);
         itemStorage.update(item);
         log.info("Информация о Item обнолвена:name - {}, id - {}", item.getName(), item.getId());
         return item;
@@ -61,18 +62,9 @@ public class ItemServiceImpl implements ItemService {
     @Override
     public List<Item> search(String text) {
         log.info("Выполнен поиск Item по значению - {}", text);
-        if (text != null && !text.isBlank()) {
             return itemStorage.search(text);
-        } else {
-            return new ArrayList<>();
-        }
     }
 
-    private void checkItem(Integer id) {
-        if (!itemStorage.containsId(id)) {
-            throw new ObjectNotFoundException("Item не найден, проверьте верно ли указан Id");
-        }
-    }
 
     private void checkUser(Integer id) {
         if (!userStorage.containsId(id)) {
@@ -81,12 +73,10 @@ public class ItemServiceImpl implements ItemService {
     }
 
     private void checkItemForUser(Integer userId, Integer itemId) {
-        checkItem(itemId);
-        if (!userStorage.containsId(userId)) {
-            throw new ObjectNotFoundException("Пользователь не найден, проверьте верно ли указан Id");
-        }
-        if (!Objects.equals(itemStorage.get(itemId).getOwnerId(), userId)) {
-            throw new ObjectNotFoundException(String.format("Item c id = %d не найден для пользователя c id = %d", itemId, userId));
+        checkUser(userId);
+        if (!Objects.equals(get(itemId).getOwnerId(), userId)) {
+            throw new ObjectNotFoundException(String.format("Item c id = %d не найден для пользователя c id = %d",
+                    itemId, userId));
         }
     }
 }

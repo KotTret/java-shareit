@@ -3,11 +3,14 @@ package ru.practicum.shareit.user.controller;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.mapper.UserMapper;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.service.UserService;
+import ru.practicum.shareit.util.validation.Create;
+import ru.practicum.shareit.util.validation.Update;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -36,12 +39,15 @@ public class UserController {
     }
 
     @PostMapping
-    public ResponseEntity<UserDto> create(@Valid @RequestBody User user) {
+    public ResponseEntity<UserDto> create(@Validated(Create.class) @RequestBody UserDto userDto) {
+        User user = userMapper.toEntity(userDto);
         return new ResponseEntity<>(userMapper.toDto(userService.create(user)), HttpStatus.OK);
     }
 
     @PatchMapping("/{userId}")
-    public ResponseEntity<UserDto> update(@RequestBody UserDto userDto, @PathVariable Integer userId) {
+    public ResponseEntity<UserDto> update(@Validated(Update.class) @RequestBody UserDto userDto,
+                                          @PathVariable Integer userId) {
+
         return new ResponseEntity<>(userMapper.toDto(userService.update(userId, userDto)), HttpStatus.OK);
     }
 

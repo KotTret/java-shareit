@@ -15,7 +15,7 @@ public class InMemoryUserStorage implements UserStorage {
 
     private final Map<Integer, User> users = new HashMap<>();
 
-    private final HashSet<String> emails = new HashSet<>();
+    private final Map<Integer,String> emails = new HashMap<>();
     private final IdGenerator idGenerator;
 
     @Override
@@ -24,27 +24,27 @@ public class InMemoryUserStorage implements UserStorage {
     }
 
     @Override
-    public User get(Integer userId) {
-        return users.get(userId);
+    public Optional<User> get(Integer userId) {
+        return Optional.ofNullable(users.get(userId));
     }
 
     @Override
     public void add(User user) {
         user.setId(idGenerator.getId());
         users.put(user.getId(), user);
-        emails.addAll(users.values().stream().map(User::getEmail).collect(Collectors.toSet()));
+        emails.put(user.getId(),user.getEmail());
     }
 
     @Override
     public void update(User user) {
-        users.put(user.getId(), user);
-        emails.clear();
-        emails.addAll(users.values().stream().map(User::getEmail).collect(Collectors.toSet()));
+        emails.put(user.getId(), user.getEmail());
     }
 
     @Override
     public void delete(Integer userId) {
-        emails.remove(users.remove(userId).getEmail());
+        users.remove(userId);
+        emails.remove(userId);
+        //add remove Items
     }
 
     @Override
@@ -54,6 +54,6 @@ public class InMemoryUserStorage implements UserStorage {
 
     @Override
     public boolean containsEmail(String email) {
-        return emails.contains(email);
+        return emails.containsValue(email);
     }
 }
