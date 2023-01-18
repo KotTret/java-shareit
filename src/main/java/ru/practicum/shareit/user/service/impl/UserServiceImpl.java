@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.exception.model.ObjectNotFoundException;
 import ru.practicum.shareit.exception.model.ValidationException;
+import ru.practicum.shareit.item.storage.ItemStorage;
 import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.service.UserService;
@@ -19,6 +20,7 @@ import java.util.List;
 public class UserServiceImpl implements UserService {
 
     private final UserStorage userStorage;
+    private final ItemStorage itemStorage;
 
     @Override
     public List<User> getAll() {
@@ -59,6 +61,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public void delete(Integer userId) {
         userStorage.delete(userId);
+        itemStorage.deleteItemsForUser(userId);
     }
 
     private void checkEmail(String email) {

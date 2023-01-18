@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.exception.model.ObjectNotFoundException;
-import ru.practicum.shareit.exception.model.ValidationException;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.service.ItemService;
@@ -12,7 +11,6 @@ import ru.practicum.shareit.item.storage.ItemStorage;
 import ru.practicum.shareit.user.storage.UserStorage;
 import ru.practicum.shareit.util.UtilMergeProperty;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -54,7 +52,6 @@ public class ItemServiceImpl implements ItemService {
         checkItemForUser(userId, itemId);
         Item item = get(itemId);
         UtilMergeProperty.copyProperties(itemDto, item);
-        itemStorage.update(item);
         log.info("Информация о Item обнолвена:name - {}, id - {}", item.getName(), item.getId());
         return item;
     }
@@ -62,7 +59,7 @@ public class ItemServiceImpl implements ItemService {
     @Override
     public List<Item> search(String text) {
         log.info("Выполнен поиск Item по значению - {}", text);
-            return itemStorage.search(text);
+        return itemStorage.search(text);
     }
 
 

@@ -12,8 +12,6 @@ import ru.practicum.shareit.item.service.ItemService;
 import ru.practicum.shareit.util.validation.Create;
 import ru.practicum.shareit.util.validation.Update;
 
-import javax.validation.Valid;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 

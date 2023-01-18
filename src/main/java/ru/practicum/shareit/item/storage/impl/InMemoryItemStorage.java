@@ -22,9 +22,9 @@ public class InMemoryItemStorage implements ItemStorage {
     public List<Item> getAll(Integer userId) {
         if (userId == null) {
             return new ArrayList<>(items.values());
-        } else if(!userItemIndex.containsKey(userId)) {
+        } else if (!userItemIndex.containsKey(userId)) {
             return new ArrayList<>();
-        }else {
+        } else {
             return Optional.ofNullable(userItemIndex.get(userId))
                     .orElseThrow(() -> new ObjectNotFoundException("Пользователь не найден," +
                             " проверьте верно ли указан Id"));
@@ -46,7 +46,6 @@ public class InMemoryItemStorage implements ItemStorage {
 
     @Override
     public void update(Item item) {
-        items.put(item.getId(), item);
     }
 
     @Override
@@ -62,5 +61,15 @@ public class InMemoryItemStorage implements ItemStorage {
                         || o.getDescription().toLowerCase().contains(text.toLowerCase()))
                         && o.getAvailable().equals(Boolean.TRUE))
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public void deleteItemsForUser(Integer userId) {
+        if (userItemIndex.containsKey(userId)) {
+            userItemIndex.remove(userId)
+                    .stream()
+                    .map(Item::getId)
+                    .forEach(items::remove);
+        }
     }
 }

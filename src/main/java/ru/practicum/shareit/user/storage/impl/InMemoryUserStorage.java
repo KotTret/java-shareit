@@ -7,7 +7,6 @@ import ru.practicum.shareit.user.storage.UserStorage;
 import ru.practicum.shareit.util.generator.IdGenerator;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Component
 @RequiredArgsConstructor
@@ -15,7 +14,7 @@ public class InMemoryUserStorage implements UserStorage {
 
     private final Map<Integer, User> users = new HashMap<>();
 
-    private final Map<Integer,String> emails = new HashMap<>();
+    private final Map<Integer, String> emails = new HashMap<>();
     private final IdGenerator idGenerator;
 
     @Override
@@ -32,7 +31,7 @@ public class InMemoryUserStorage implements UserStorage {
     public void add(User user) {
         user.setId(idGenerator.getId());
         users.put(user.getId(), user);
-        emails.put(user.getId(),user.getEmail());
+        emails.put(user.getId(), user.getEmail());
     }
 
     @Override
@@ -44,7 +43,7 @@ public class InMemoryUserStorage implements UserStorage {
     public void delete(Integer userId) {
         users.remove(userId);
         emails.remove(userId);
-        //add remove Items
+
     }
 
     @Override

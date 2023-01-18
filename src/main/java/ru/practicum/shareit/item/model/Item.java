@@ -2,10 +2,6 @@ package ru.practicum.shareit.item.model;
 
 import lombok.*;
 
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
-
 @Getter
 @Setter
 @NoArgsConstructor
@@ -26,7 +22,4 @@ public class Item {
 
     private Boolean available;
 
-    private int numberOfBookings;
-
-    private Integer requestId;
 }

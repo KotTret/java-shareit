@@ -8,7 +8,7 @@ import javax.validation.ConstraintValidatorContext;
 
 public class MyEmailConstraintValidator implements ConstraintValidator<MyEmail, String> {
 
-    private final static EmailValidator emailValidator =  EmailValidator.getInstance();
+    private final static EmailValidator emailValidator = EmailValidator.getInstance();
 
     @Override
     public boolean isValid(String email, ConstraintValidatorContext constraintValidatorContext) {

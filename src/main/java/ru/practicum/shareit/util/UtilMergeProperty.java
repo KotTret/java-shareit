@@ -1,5 +1,6 @@
 package ru.practicum.shareit.util;
 
+import lombok.experimental.UtilityClass;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.BeanWrapper;
 import org.springframework.beans.BeanWrapperImpl;
@@ -7,6 +8,7 @@ import org.springframework.beans.BeanWrapperImpl;
 import java.util.HashSet;
 import java.util.Set;
 
+@UtilityClass
 public class UtilMergeProperty {
 
     public static <T1, T2> void copyProperties(T1 source, T2 target) {

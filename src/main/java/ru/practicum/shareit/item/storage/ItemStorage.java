@@ -18,4 +18,6 @@ public interface ItemStorage {
     boolean containsId(Integer id);
 
     List<Item> search(String text);
+
+    void deleteItemsForUser(Integer userId);
 }
