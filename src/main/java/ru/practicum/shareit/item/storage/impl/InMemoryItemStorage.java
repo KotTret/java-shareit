@@ -2,7 +2,6 @@ package ru.practicum.shareit.item.storage.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
-import ru.practicum.shareit.exception.model.ObjectNotFoundException;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.storage.ItemStorage;
 import ru.practicum.shareit.util.generator.IdGenerator;
@@ -20,14 +19,10 @@ public class InMemoryItemStorage implements ItemStorage {
 
     @Override
     public List<Item> getAll(Integer userId) {
-        if (userId == null) {
-            return new ArrayList<>(items.values());
-        } else if (!userItemIndex.containsKey(userId)) {
-            return new ArrayList<>();
+        if (!userItemIndex.containsKey(userId)) {
+            return  List.of();
         } else {
-            return Optional.ofNullable(userItemIndex.get(userId))
-                    .orElseThrow(() -> new ObjectNotFoundException("Пользователь не найден," +
-                            " проверьте верно ли указан Id"));
+            return (userItemIndex.get(userId));
         }
     }
 

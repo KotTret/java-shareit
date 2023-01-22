@@ -24,7 +24,7 @@ public class ItemController {
     private final ItemMapper itemMapper;
 
     @GetMapping
-    public List<ItemDto> getAll(@RequestHeader(value = "X-Sharer-User-Id", required = false) Integer userId) {
+    public List<ItemDto> getAll(@RequestHeader("X-Sharer-User-Id") Integer userId) {
         List<Item> items = itemService.getAll(userId);
         return items.stream()
                 .map(itemMapper::toDto)
