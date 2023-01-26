@@ -4,11 +4,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.exception.model.ObjectNotFoundException;
+import ru.practicum.shareit.item.dao.ItemRepository;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.service.ItemService;
-import ru.practicum.shareit.item.storage.ItemStorage;
-import ru.practicum.shareit.user.storage.UserStorage;
 import ru.practicum.shareit.util.UtilMergeProperty;
 
 import java.util.List;
@@ -19,13 +18,13 @@ import java.util.Objects;
 @Slf4j
 public class ItemServiceImpl implements ItemService {
 
-    private final ItemStorage itemStorage;
+    private final ItemRepository itemRepository;
     private final UserStorage userStorage;
 
 
     @Override
     public List<Item> getAll(Integer userId) {
-        List<Item> items = itemStorage.getAll(userId);
+        List<Item> items = itemRepository.getAll(userId);
         log.info("Запрошено количество вещей у - {}", items.size());
         return items;
     }

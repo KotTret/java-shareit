@@ -15,7 +15,7 @@ import javax.validation.constraints.Size;
 @NoArgsConstructor
 public class ItemDto {
 
-    private Integer id;
+    private Long id;
     @NotBlankNull(groups = {Update.class})
     @NotBlank(message = "Название не может быть пустым.", groups = {Create.class})
     private String name;
@@ -26,6 +26,6 @@ public class ItemDto {
     private String description;
 
     @NotNull(groups = {Create.class})
-    private Boolean available;
+    private Boolean isAvailable;
 
 }

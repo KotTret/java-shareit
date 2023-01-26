@@ -5,11 +5,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.exception.model.ObjectNotFoundException;
 import ru.practicum.shareit.exception.model.ValidationException;
-import ru.practicum.shareit.item.storage.ItemStorage;
+import ru.practicum.shareit.item.dao.ItemRepository;
+import ru.practicum.shareit.user.dao.UserRepository;
 import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.service.UserService;
-import ru.practicum.shareit.user.storage.UserStorage;
 import ru.practicum.shareit.util.UtilMergeProperty;
 
 import java.util.List;
@@ -19,19 +19,19 @@ import java.util.List;
 @Slf4j
 public class UserServiceImpl implements UserService {
 
-    private final UserStorage userStorage;
-    private final ItemStorage itemStorage;
+    private final UserRepository userRepository;
+    private final ItemRepository itemRepository;
 
     @Override
     public List<User> getAll() {
-        List<User> users = userStorage.getAll();
+        List<User> users = userRepository.findAll();
         log.info("Текущее количество пользователей: {}", users.size());
         return users;
     }
 
     @Override
-    public User get(Integer userId) {
-        User user = userStorage.get(userId)
+    public User get(Long userId) {
+        User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ObjectNotFoundException("Пользователь не найден, проверьте верно ли указан Id"));
         log.info("Запрошена информация о пользователе: {}", user.getEmail());
         return user;
@@ -39,35 +39,32 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User create(User user) {
-        checkEmail(user.getEmail());
-        userStorage.add(user);
+        try {
+            userRepository.save(user);
+        } catch (RuntimeException e) {
+            throw new ValidationException("Данный email уже занят", e);
+        }
         log.info("Добавлен пользователь: {}", user.getEmail());
         return user;
     }
 
     @Override
-    public User update(Integer userId, UserDto userDto) {
-        if (userDto.getEmail() != null) {
-            checkEmail(userDto.getEmail());
-        }
+    public User update(Long userId, UserDto userDto) {
         userDto.setId(userId);
         User user = get(userId);
         UtilMergeProperty.copyProperties(userDto, user);
-        userStorage.update(user);
+        try {
+            userRepository.save(user);
+        } catch (RuntimeException e) {
+            throw new ValidationException("Данный email уже занят", e);
+        }
         log.info("Информация о пользователе обновлена: {}", user.getEmail());
         return user;
     }
 
     @Override
-    public void delete(Integer userId) {
-        userStorage.delete(userId);
-        itemStorage.deleteItemsForUser(userId);
-    }
-
-    private void checkEmail(String email) {
-        if (userStorage.containsEmail(email)) {
-            throw new ValidationException("Данный email уже занят");
-        }
+    public void delete(Long userId) {
+        userRepository.delete(get(userId));
     }
 
 }

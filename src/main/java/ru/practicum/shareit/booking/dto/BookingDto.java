@@ -3,28 +3,29 @@ package ru.practicum.shareit.booking.dto;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import ru.practicum.shareit.item.model.Item;
+import ru.practicum.shareit.user.model.User;
+
 import java.time.Duration;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Getter
 @AllArgsConstructor
 public class BookingDto {
 
-    private Integer idBooking;
+    private Integer id;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
-    private LocalDate startDate;
-
-    private Duration duration;
+    private LocalDateTime start;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
-    private LocalDate endDate;
+    private LocalDateTime end;
 
     private Integer ownerId;
 
-    private Integer tenantId;
+    private User booker;
 
-    private Integer itemId;
+    private Item item;
 
     private boolean isConfirmFromOwner;
 }
