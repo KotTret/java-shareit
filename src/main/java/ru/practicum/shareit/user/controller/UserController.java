@@ -46,8 +46,8 @@ public class UserController {
     @PatchMapping("/{userId}")
     public ResponseEntity<UserDto> update(@Validated(Update.class) @RequestBody UserDto userDto,
                                           @PathVariable Long userId) {
-
-        return new ResponseEntity<>(userMapper.toDto(userService.update(userId, userDto)), HttpStatus.OK);
+        User user = userMapper.toEntity(userDto);
+        return new ResponseEntity<>(userMapper.toDto(userService.update(userId, user)), HttpStatus.OK);
     }
 
     @DeleteMapping(value = "/{userId}")

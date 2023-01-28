@@ -17,6 +17,7 @@ import java.util.List;
 public class User {
 
     @Id
+    @Column(name = "user_id", nullable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
@@ -26,8 +27,7 @@ public class User {
     @Column(name = "name", nullable = false)
     private String name;
 
-    @OneToMany(mappedBy = "owner"
-            , cascade = CascadeType.ALL
+    @OneToMany(mappedBy = "owner", cascade = CascadeType.ALL
             , fetch = FetchType.LAZY)
     private List<Item> items = new ArrayList<>();
 }

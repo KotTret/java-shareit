@@ -24,7 +24,7 @@ public class ItemController {
     private final ItemMapper itemMapper;
 
     @GetMapping
-    public List<ItemDto> getAll(@RequestHeader("X-Sharer-User-Id") Integer userId) {
+    public List<ItemDto> getAll(@RequestHeader("X-Sharer-User-Id") Long userId) {
         List<Item> items = itemService.getAll(userId);
         return items.stream()
                 .map(itemMapper::toDto)
@@ -32,20 +32,21 @@ public class ItemController {
     }
 
     @GetMapping("/{itemId}")
-    public ResponseEntity<ItemDto> get(@PathVariable Integer itemId) {
+    public ResponseEntity<ItemDto> get(@PathVariable Long itemId) {
         return new ResponseEntity<>(itemMapper.toDto(itemService.get(itemId)), HttpStatus.OK);
     }
 
     @PostMapping
-    public ResponseEntity<ItemDto> create(@RequestHeader("X-Sharer-User-Id") Integer userId,
+    public ResponseEntity<ItemDto> create(@RequestHeader("X-Sharer-User-Id") Long userId,
                                           @Validated(Create.class) @RequestBody ItemDto itemDto) {
         Item item = itemMapper.toEntity(itemDto);
         return new ResponseEntity<>(itemMapper.toDto(itemService.create(userId, item)), HttpStatus.OK);
     }
 
     @PatchMapping("/{itemId}")
-    public ResponseEntity<ItemDto> update(@RequestHeader("X-Sharer-User-Id") Integer userId,
-                                          @Validated(Update.class) @RequestBody ItemDto itemDto, @PathVariable Integer itemId) {
+    public ResponseEntity<ItemDto> update(@RequestHeader("X-Sharer-User-Id") Long userId,
+                                          @Validated(Update.class) @RequestBody ItemDto itemDto,
+                                          @PathVariable Long itemId) {
         return new ResponseEntity<>(itemMapper.toDto(itemService.update(userId, itemId, itemDto)), HttpStatus.OK);
     }
 

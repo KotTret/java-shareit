@@ -16,6 +16,7 @@ import javax.persistence.*;
 public class Item {
 
     @Id
+    @Column(name = "item_id", nullable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
@@ -25,7 +26,7 @@ public class Item {
     @Column(name = "description")
     private String description;
 
-    @Column(name = "user_id")
+
     @ManyToOne(cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
     @JoinColumn(name = "user_id")
     private User owner;
@@ -33,8 +34,8 @@ public class Item {
     @Column(name = "is_available")
     private Boolean isAvailable;
 
-    @Column(name = "request_id")
-    @OneToOne
+    @OneToOne(cascade = CascadeType.REMOVE)
+    @JoinColumn(name = "request_id")
     private ItemRequest request;
 
 }
