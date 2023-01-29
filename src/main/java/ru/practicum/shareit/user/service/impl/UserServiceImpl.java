@@ -61,7 +61,12 @@ public class UserServiceImpl implements UserService {
     public User update(Long userId, User user) {
         user.setId(userId);
         User userTarget = get(userId);
-        UtilMergeProperty.copyProperties(user, userTarget);
+        try {
+            UtilMergeProperty.copyProperties(user, userTarget);
+            userRepository.flush();
+        } catch (DataIntegrityViolationException e) {
+            throw new ValidationException("Данный email уже занят", e);
+        }
         log.info("Информация о пользователе обновлена: {}", user.getEmail());
         return userTarget;
     }
@@ -69,7 +74,7 @@ public class UserServiceImpl implements UserService {
     @Transactional(propagation = Propagation.REQUIRED)
     @Override
     public void delete(Long userId) {
-        userRepository.delete(get(userId));
+        userRepository.deleteById(userId);
     }
 
 }

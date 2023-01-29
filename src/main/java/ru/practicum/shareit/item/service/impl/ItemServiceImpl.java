@@ -15,7 +15,6 @@ import ru.practicum.shareit.util.UtilMergeProperty;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -29,7 +28,8 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public List<Item> getAll(Long userId) {
-        List<Item> items = itemRepository.findAllByOwner(userId);
+        List<Item> items = itemRepository.findAllByOwner(userRepository.findById(userId)
+                .orElseThrow(() -> new ObjectNotFoundException("Пользователь не найден, проверьте верно ли указан Id")));
         log.info("Запрошено количество вещей: {}", items.size());
         return items;
     }
@@ -55,7 +55,6 @@ public class ItemServiceImpl implements ItemService {
         checkItemForUser(userId, itemId);
         Item item = get(itemId);
         UtilMergeProperty.copyProperties(itemDto, item);
-        itemRepository.save(item);
         log.info("Информация о Item обнолвена:name - {}, id - {}", item.getName(), item.getId());
         return item;
     }
@@ -63,23 +62,20 @@ public class ItemServiceImpl implements ItemService {
     @Override
     public List<Item> search(String text) {
         log.info("Выполнен поиск Item по значению - {}", text);
-        return new ArrayList<>();
+        return itemRepository.search(text);
     }
+
 
     private void setOwnerForItem(Item item, Long userId) {
         item.setOwner(userRepository.findById(userId)
                 .orElseThrow(() -> new ObjectNotFoundException("Пользователь не найден, проверьте верно ли указан Id")));
     }
 
-    private void checkUserById(Long id) {
-        if (userRepository.existsById(id)) {
-            throw new ObjectNotFoundException("Пользователь не найден, проверьте верно ли указан Id");
-        }
-    }
-
     private void checkItemForUser(Long userId, Long itemId) {
-       itemRepository.findByIdAndOwner(itemId, userId).orElseThrow(() ->
-               new ObjectNotFoundException(String.format("Item c id = %d не найден для пользователя c id = %d",
-                itemId, userId)));
+        itemRepository.findByIdAndOwner(itemId, userRepository.findById(userId)
+                .orElseThrow(() ->
+                        new ObjectNotFoundException("Пользователь не найден, проверьте верно ли указан Id"))).orElseThrow(() ->
+                new ObjectNotFoundException(String.format("Item c id = %d не найден для пользователя c id = %d",
+                        itemId, userId)));
     }
 }

@@ -1,7 +1,6 @@
 package ru.practicum.shareit.request;
 
 import lombok.*;
-import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.model.User;
 
 import javax.persistence.*;
@@ -21,8 +20,8 @@ public class ItemRequest {
     private Integer id;
 
 
-    @OneToOne
-    @JoinColumn(name = "user_id")
+    @ManyToOne(cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
+    @JoinColumn(name = "requester_id")
     private User requester;
 
     @Column(name = "description")

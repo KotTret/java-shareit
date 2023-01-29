@@ -26,16 +26,25 @@ public class Item {
     @Column(name = "description")
     private String description;
 
-
     @ManyToOne(cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
     @JoinColumn(name = "user_id")
     private User owner;
 
     @Column(name = "is_available")
-    private Boolean isAvailable;
+    private Boolean available;
 
     @OneToOne(cascade = CascadeType.REMOVE)
     @JoinColumn(name = "request_id")
     private ItemRequest request;
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Item)) return false;
+        return id != null && id.equals(((Item) o).getId());
+    }
+    @Override
+    public int hashCode() {
+        return getClass().hashCode();
+    }
 }

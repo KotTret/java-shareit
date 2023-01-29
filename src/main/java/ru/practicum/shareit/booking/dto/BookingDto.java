@@ -1,31 +1,34 @@
 package ru.practicum.shareit.booking.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import ru.practicum.shareit.item.model.Item;
-import ru.practicum.shareit.user.model.User;
+import lombok.*;
+import ru.practicum.shareit.util.validation.Update;
 
-import java.time.Duration;
+import javax.validation.constraints.FutureOrPresent;
+import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
+import java.util.Date;
 
-@Getter
 @AllArgsConstructor
-public class BookingDto {
+@NoArgsConstructor
+@Getter
+@Setter
+@Builder
+public  class BookingDto {
 
+    @NotNull(groups = {Update.class})
     private Integer id;
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
+
+    @NotNull(message = "Дата начала бронирования не может быть пустой")
+    @FutureOrPresent
     private LocalDateTime start;
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
-    private LocalDateTime end;
+    @NotNull(message = "Дата завершения бронирования не может быть пустой")
+    @FutureOrPresent
+    private LocalDateTime  end;
 
-    private Integer ownerId;
+    @NotNull
+    private Long itemId;
 
-    private User booker;
-
-    private Item item;
-
-    private boolean isConfirmFromOwner;
 }

@@ -7,6 +7,7 @@ import ru.practicum.shareit.util.validation.myemail.MyEmail;
 import ru.practicum.shareit.util.validation.notblanknull.NotBlankNull;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 @Getter
 @Setter
@@ -15,6 +16,7 @@ import javax.validation.constraints.NotBlank;
 @Builder
 public class UserDto {
 
+    @NotNull(groups = {Update.class})
     private Long id;
 
     @NotBlank(groups = {Create.class})
