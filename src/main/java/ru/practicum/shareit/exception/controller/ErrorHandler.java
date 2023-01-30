@@ -14,9 +14,6 @@ import ru.practicum.shareit.exception.model.ErrorResponse;
 import ru.practicum.shareit.exception.model.ObjectNotFoundException;
 import ru.practicum.shareit.exception.model.ValidationException;
 
-import java.io.ByteArrayOutputStream;
-import java.io.PrintStream;
-import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 @RestControllerAdvice
@@ -87,11 +84,8 @@ public class ErrorHandler {
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ErrorResponse handleRuntimeException(final Throwable e) {
         log.warn("500 {}", e.getMessage(), e);
-        final ByteArrayOutputStream out = new ByteArrayOutputStream();
-        e.printStackTrace(new PrintStream(out));
         return new ErrorResponse(
-                "Непредвиденная ошибка",
-                out.toString(StandardCharsets.UTF_8)
+                "Непредвиденная ошибка"
         );
     }
 }
