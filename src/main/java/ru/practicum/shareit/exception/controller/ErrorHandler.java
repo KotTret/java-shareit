@@ -83,7 +83,6 @@ public class ErrorHandler {
         );
     }
 
-
     @ExceptionHandler
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ErrorResponse handleRuntimeException(final Throwable e) {

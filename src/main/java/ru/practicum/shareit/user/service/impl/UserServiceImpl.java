@@ -8,27 +8,21 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.exception.model.ObjectNotFoundException;
 import ru.practicum.shareit.exception.model.ValidationException;
-import ru.practicum.shareit.item.dao.ItemRepository;
 import ru.practicum.shareit.user.dao.UserRepository;
-import ru.practicum.shareit.user.dto.UserDto;
-import ru.practicum.shareit.user.mapper.UserMapper;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.service.UserService;
 import ru.practicum.shareit.util.UtilMergeProperty;
 
-import javax.validation.ConstraintViolationException;
 import java.util.List;
 
 @Service
 @RequiredArgsConstructor
 @Slf4j
-@Transactional(readOnly = true)
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
 
-    private final UserMapper userMapper;
-
+    @Transactional(propagation = Propagation.REQUIRED)
     @Override
     public List<User> getAll() {
         List<User> users = userRepository.findAll();
@@ -36,6 +30,7 @@ public class UserServiceImpl implements UserService {
         return users;
     }
 
+    @Transactional(propagation = Propagation.REQUIRED)
     @Override
     public User get(Long userId) {
         User user = userRepository.findById(userId)

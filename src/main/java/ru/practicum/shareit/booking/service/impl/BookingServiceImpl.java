@@ -3,6 +3,7 @@ package ru.practicum.shareit.booking.service.impl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.booking.dao.BookingRepository;
 import ru.practicum.shareit.booking.model.Booking;
@@ -11,11 +12,9 @@ import ru.practicum.shareit.booking.model.Status;
 import ru.practicum.shareit.booking.service.BookingService;
 import ru.practicum.shareit.exception.model.BadRequestException;
 import ru.practicum.shareit.exception.model.ObjectNotFoundException;
-import ru.practicum.shareit.exception.model.ValidationException;
 import ru.practicum.shareit.item.dao.ItemRepository;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.dao.UserRepository;
-import ru.practicum.shareit.user.model.User;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -23,13 +22,13 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-@Transactional(readOnly = true)
 public class BookingServiceImpl implements BookingService {
 
     private final BookingRepository bookingRepository;
     private final UserRepository userRepository;
     private final ItemRepository itemRepository;
 
+    @Transactional(propagation = Propagation.REQUIRED)
     @Override
     public Booking get(Long id, Long userId) {
         Booking booking = bookingRepository.findById(id).orElseThrow(() ->
@@ -37,16 +36,17 @@ public class BookingServiceImpl implements BookingService {
         if (booking.getBooker().getId().equals(userId)
                 || booking.getItem().getOwner().getId().equals(userId)) {
             log.info("Запрошена информация о брони с id: {}", id);
-           return booking;
+            return booking;
         } else {
             throw new ObjectNotFoundException("Пользователь не является арендатором или владельцем Item");
         }
     }
 
+    @Transactional(propagation = Propagation.REQUIRED)
     @Override
     public List<Booking> findAllByOwnerId(Long userId, String state) {
-        if(userRepository.existsById(userId)) {
-            log.info("Запрошена информация о бронированиях для всех вещей пользователя с id: {}, по статусу: {}" , userId, state);
+        if (userRepository.existsById(userId)) {
+            log.info("Запрошена информация о бронированиях для всех вещей пользователя с id: {}, по статусу: {}", userId, state);
             try {
                 State.valueOf(state);
             } catch (RuntimeException e) {
@@ -70,14 +70,15 @@ public class BookingServiceImpl implements BookingService {
                     throw new BadRequestException("Unknown state: UNSUPPORTED_STATUS");
             }
         } else {
-            throw new  ObjectNotFoundException("Пользователь не найден, проверьте верно ли указан Id");
+            throw new ObjectNotFoundException("Пользователь не найден, проверьте верно ли указан Id");
         }
     }
 
+    @Transactional(propagation = Propagation.REQUIRED)
     @Override
     public List<Booking> findAllByBookerId(Long userId, String state) {
-        if(userRepository.existsById(userId)) {
-            log.info("Запрошена информация о всех бронированиях пользователя с id: {}, по статусу: {}" , userId, state);
+        if (userRepository.existsById(userId)) {
+            log.info("Запрошена информация о всех бронированиях пользователя с id: {}, по статусу: {}", userId, state);
             try {
                 State.valueOf(state);
             } catch (RuntimeException e) {
@@ -94,21 +95,21 @@ public class BookingServiceImpl implements BookingService {
                 case FUTURE:
                     return bookingRepository.findAllByBookerIdAndStartAfterOrderByStartDesc(userId, LocalDateTime.now());
                 case WAITING:
-                    return  bookingRepository.findAllByBookerIdAndStatusOrderByStartDesc(userId, Status.WAITING);
+                    return bookingRepository.findAllByBookerIdAndStatusOrderByStartDesc(userId, Status.WAITING);
                 case REJECTED:
                     return bookingRepository.findAllByBookerIdAndStatusOrderByStartDesc(userId, Status.REJECTED);
                 default:
                     throw new BadRequestException("Unknown state: UNSUPPORTED_STATUS");
             }
         } else {
-            throw new  ObjectNotFoundException("Пользователь не найден, проверьте верно ли указан Id");
+            throw new ObjectNotFoundException("Пользователь не найден, проверьте верно ли указан Id");
         }
     }
 
     @Override
     @Transactional
     public Booking create(Booking booking, Long userId, Long itemId) {
-        validate(booking, userId);
+        validate(booking);
         setUserAndItemForBooking(booking, userId, itemId);
         booking.setStatus(Status.WAITING);
         bookingRepository.save(booking);
@@ -157,7 +158,8 @@ public class BookingServiceImpl implements BookingService {
         }
         booking.setItem(item);
     }
-    private void validate(Booking booking, Long userId) {
+
+    private void validate(Booking booking) {
         if (booking.getStart().isBefore(LocalDateTime.now())) {
             throw new BadRequestException("Бронь в прошедшем времени");
         }

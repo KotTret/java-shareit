@@ -7,7 +7,6 @@ import ru.practicum.shareit.util.validation.myemail.MyEmail;
 import ru.practicum.shareit.util.validation.notblanknull.NotBlankNull;
 
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 
 @Getter
 @Setter
