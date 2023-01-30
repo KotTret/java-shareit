@@ -5,6 +5,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import ru.practicum.shareit.item.comment.Comment;
+import ru.practicum.shareit.item.comment.CommentDto;
+import ru.practicum.shareit.item.comment.CommentMapper;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.mapper.ItemMapper;
 import ru.practicum.shareit.item.model.Item;
@@ -12,6 +15,7 @@ import ru.practicum.shareit.item.service.ItemService;
 import ru.practicum.shareit.util.validation.Create;
 import ru.practicum.shareit.util.validation.Update;
 
+import javax.validation.Valid;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -24,13 +28,14 @@ public class ItemController {
 
     @GetMapping
     public List<ItemDto> getAll(@RequestHeader("X-Sharer-User-Id") Long userId) {
-       return itemService.getAll(userId);
+        return itemService.getAll(userId);
 
     }
 
     @GetMapping("/{itemId}")
-    public ResponseEntity<ItemDto> get(@PathVariable Long itemId) {
-        return new ResponseEntity<>(ItemMapper.toDto(itemService.get(itemId)), HttpStatus.OK);
+    public ResponseEntity<ItemDto> get(@RequestHeader(name = "X-Sharer-User-Id", required = false) Long userId,
+                                       @PathVariable Long itemId) {
+        return new ResponseEntity<>(itemService.get(itemId, userId), HttpStatus.OK);
     }
 
     @PostMapping
@@ -57,5 +62,13 @@ public class ItemController {
         } else {
             return List.of();
         }
+    }
+
+    @PostMapping("/{id}/comment")
+    public ResponseEntity<CommentDto> addComment(@RequestHeader("X-Sharer-User-id") Long userId,
+                                                 @PathVariable(name = "id") Long itemId,
+                                                 @Valid @RequestBody CommentDto commentDto) {
+        Comment comment = CommentMapper.toEntity(commentDto);
+        return new ResponseEntity<>(itemService.createComment(itemId, userId, comment), HttpStatus.OK);
     }
 }
