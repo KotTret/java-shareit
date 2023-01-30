@@ -21,33 +21,30 @@ import java.util.stream.Collectors;
 public class ItemController {
 
     private final ItemService itemService;
-    private final ItemMapper itemMapper;
 
     @GetMapping
     public List<ItemDto> getAll(@RequestHeader("X-Sharer-User-Id") Long userId) {
-        List<Item> items = itemService.getAll(userId);
-        return items.stream()
-                .map(itemMapper::toDto)
-                .collect(Collectors.toList());
+       return itemService.getAll(userId);
+
     }
 
     @GetMapping("/{itemId}")
     public ResponseEntity<ItemDto> get(@PathVariable Long itemId) {
-        return new ResponseEntity<>(itemMapper.toDto(itemService.get(itemId)), HttpStatus.OK);
+        return new ResponseEntity<>(ItemMapper.toDto(itemService.get(itemId)), HttpStatus.OK);
     }
 
     @PostMapping
     public ResponseEntity<ItemDto> create(@RequestHeader("X-Sharer-User-Id") Long userId,
                                           @Validated(Create.class) @RequestBody ItemDto itemDto) {
-        Item item = itemMapper.toEntity(itemDto);
-        return new ResponseEntity<>(itemMapper.toDto(itemService.create(userId, item)), HttpStatus.OK);
+        Item item = ItemMapper.toEntity(itemDto);
+        return new ResponseEntity<>(ItemMapper.toDto(itemService.create(userId, item)), HttpStatus.OK);
     }
 
     @PatchMapping("/{itemId}")
     public ResponseEntity<ItemDto> update(@RequestHeader("X-Sharer-User-Id") Long userId,
                                           @Validated(Update.class) @RequestBody ItemDto itemDto,
                                           @PathVariable Long itemId) {
-        return new ResponseEntity<>(itemMapper.toDto(itemService.update(userId, itemId, itemDto)), HttpStatus.OK);
+        return new ResponseEntity<>(ItemMapper.toDto(itemService.update(userId, itemId, itemDto)), HttpStatus.OK);
     }
 
     @GetMapping("/search")
@@ -55,7 +52,7 @@ public class ItemController {
         if (!text.isBlank()) {
             List<Item> items = itemService.search(text);
             return items.stream()
-                    .map(itemMapper::toDto)
+                    .map(ItemMapper::toDto)
                     .collect(Collectors.toList());
         } else {
             return List.of();

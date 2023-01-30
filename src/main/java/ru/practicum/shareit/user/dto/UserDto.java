@@ -16,7 +16,6 @@ import javax.validation.constraints.NotNull;
 @Builder
 public class UserDto {
 
-    @NotNull(groups = {Update.class})
     private Long id;
 
     @NotBlank(groups = {Create.class})

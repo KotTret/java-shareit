@@ -29,18 +29,6 @@ public class User {
     @Column(name = "name", nullable = false)
     private String name;
 
-    @OneToMany(mappedBy = "owner", cascade = CascadeType.ALL
-            , fetch = FetchType.LAZY)
-    private List<Item> items = new ArrayList<>();
-
-    @OneToMany(mappedBy = "requester", cascade = CascadeType.ALL
-            , fetch = FetchType.LAZY)
-    private List<ItemRequest> requests = new ArrayList<>();
-
-    @OneToMany(mappedBy = "booker", cascade = CascadeType.ALL
-            , fetch = FetchType.LAZY)
-    private List<Booking> bookings = new ArrayList<>();
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

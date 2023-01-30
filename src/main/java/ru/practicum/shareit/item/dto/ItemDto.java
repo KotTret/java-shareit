@@ -1,6 +1,7 @@
 package ru.practicum.shareit.item.dto;
 
 import lombok.*;
+import ru.practicum.shareit.booking.dto.BookingDtoShort;
 import ru.practicum.shareit.util.validation.Create;
 import ru.practicum.shareit.util.validation.Update;
 import ru.practicum.shareit.util.validation.notblanknull.NotBlankNull;
@@ -15,7 +16,6 @@ import javax.validation.constraints.Size;
 @NoArgsConstructor
 public class ItemDto {
 
-    @NotNull(groups = {Update.class})
     private Long id;
     @NotBlankNull(groups = {Update.class})
     @NotBlank(message = "Название не может быть пустым.", groups = {Create.class})
@@ -28,5 +28,9 @@ public class ItemDto {
 
     @NotNull(groups = {Create.class})
     private Boolean available;
+
+    private BookingDtoShort lastBooking;
+
+    private BookingDtoShort nextBooking;
 
 }

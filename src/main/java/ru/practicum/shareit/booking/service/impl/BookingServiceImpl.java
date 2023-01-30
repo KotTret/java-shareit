@@ -9,6 +9,7 @@ import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.model.State;
 import ru.practicum.shareit.booking.model.Status;
 import ru.practicum.shareit.booking.service.BookingService;
+import ru.practicum.shareit.exception.model.BadRequestException;
 import ru.practicum.shareit.exception.model.ObjectNotFoundException;
 import ru.practicum.shareit.exception.model.ValidationException;
 import ru.practicum.shareit.item.dao.ItemRepository;
@@ -38,15 +39,69 @@ public class BookingServiceImpl implements BookingService {
             log.info("Запрошена информация о брони с id: {}", id);
            return booking;
         } else {
-            throw new ValidationException("Пользователь не является арендатором или владельцем Item");
+            throw new ObjectNotFoundException("Пользователь не является арендатором или владельцем Item");
         }
     }
 
+    @Override
+    public List<Booking> findAllByOwnerId(Long userId, String state) {
+        if(userRepository.existsById(userId)) {
+            log.info("Запрошена информация о бронированиях для всех вещей пользователя с id: {}, по статусу: {}" , userId, state);
+            try {
+                State.valueOf(state);
+            } catch (RuntimeException e) {
+                throw new BadRequestException("Unknown state: UNSUPPORTED_STATUS");
+            }
+            switch (State.valueOf(state)) {
+                case ALL:
+                    return bookingRepository.findAllByItem_OwnerIdOrderByStartDesc(userId);
+                case CURRENT:
+                    return bookingRepository.findAllByItem_OwnerIdAndStartBeforeAndEndAfterOrderByStartDesc(userId,
+                            LocalDateTime.now(), LocalDateTime.now());
+                case PAST:
+                    return bookingRepository.findAllByItem_OwnerIdAndEndBeforeOrderByStartDesc(userId, LocalDateTime.now());
+                case FUTURE:
+                    return bookingRepository.findAllByItem_OwnerIdAndStartAfterOrderByStartDesc(userId, LocalDateTime.now());
+                case WAITING:
+                    return bookingRepository.findAllByItem_OwnerIdAndStatusOrderByStartDesc(userId, Status.WAITING);
+                case REJECTED:
+                    return bookingRepository.findAllByItem_OwnerIdAndStatusOrderByStartDesc(userId, Status.REJECTED);
+                default:
+                    throw new BadRequestException("Unknown state: UNSUPPORTED_STATUS");
+            }
+        } else {
+            throw new  ObjectNotFoundException("Пользователь не найден, проверьте верно ли указан Id");
+        }
+    }
 
     @Override
-    public List<Booking> findAllByBookerId(Long userId, State state) {
+    public List<Booking> findAllByBookerId(Long userId, String state) {
         if(userRepository.existsById(userId)) {
-            LocalDateTime
+            log.info("Запрошена информация о всех бронированиях пользователя с id: {}, по статусу: {}" , userId, state);
+            try {
+                State.valueOf(state);
+            } catch (RuntimeException e) {
+                throw new BadRequestException("Unknown state: UNSUPPORTED_STATUS");
+            }
+            switch (State.valueOf(state)) {
+                case ALL:
+                    return bookingRepository.findAllByBookerIdOrderByStartDesc(userId);
+                case CURRENT:
+                    return bookingRepository.findAllByBookerIdAndStartBeforeAndEndAfterOrderByStartDesc(userId,
+                            LocalDateTime.now(), LocalDateTime.now());
+                case PAST:
+                    return bookingRepository.findAllByBookerIdAndEndBeforeOrderByStartDesc(userId, LocalDateTime.now());
+                case FUTURE:
+                    return bookingRepository.findAllByBookerIdAndStartAfterOrderByStartDesc(userId, LocalDateTime.now());
+                case WAITING:
+                    return  bookingRepository.findAllByBookerIdAndStatusOrderByStartDesc(userId, Status.WAITING);
+                case REJECTED:
+                    return bookingRepository.findAllByBookerIdAndStatusOrderByStartDesc(userId, Status.REJECTED);
+                default:
+                    throw new BadRequestException("Unknown state: UNSUPPORTED_STATUS");
+            }
+        } else {
+            throw new  ObjectNotFoundException("Пользователь не найден, проверьте верно ли указан Id");
         }
     }
 
@@ -67,13 +122,13 @@ public class BookingServiceImpl implements BookingService {
     public Booking setStatus(Long userId, Long bookingId, boolean approved) {
         Booking booking = bookingRepository.findById(bookingId).orElseThrow(() ->
                 new ObjectNotFoundException("Бронь не найдена, проверьте верно ли указан Id"));
-        if (booking.getBooker().getId().equals(userId)) {
+        if (booking.getItem().getOwner().getId().equals(userId)) {
             Status status = booking.getStatus();
             switch (status) {
                 case APPROVED:
-                    throw new ValidationException("Статус уже был принят как 'APPROVED'");
+                    throw new BadRequestException("Статус уже был принят как 'APPROVED'");
                 case CANCELED:
-                    throw new ValidationException("Статус уже был принят как 'CANCELED'");
+                    throw new BadRequestException("Статус уже был принят как 'CANCELED'");
                 default:
                     if (approved) {
                         booking.setStatus(Status.APPROVED);
@@ -81,6 +136,8 @@ public class BookingServiceImpl implements BookingService {
                         booking.setStatus(Status.REJECTED);
                     }
             }
+        } else {
+            throw new ObjectNotFoundException("Пользователь не является владельцем Item");
         }
         log.info("Статус для брони c id - {}, изменён на - {}", bookingId, booking.getStatus());
         return booking;
@@ -92,21 +149,22 @@ public class BookingServiceImpl implements BookingService {
         Item item = itemRepository.findById(itemId)
                 .orElseThrow(() -> new ObjectNotFoundException("Item не найден, проверьте верно ли указан Id"));
         if (item.getAvailable().equals(Boolean.FALSE)) {
-            throw new ValidationException("Item is not Available");
+            throw new BadRequestException("Item is not Available");
+        }
+
+        if (userId.equals(item.getOwner().getId())) {
+            throw new ObjectNotFoundException("Предмет не может быть забронирован у владельца Item");
         }
         booking.setItem(item);
     }
     private void validate(Booking booking, Long userId) {
         if (booking.getStart().isBefore(LocalDateTime.now())) {
-            throw new ValidationException("Бронь в прошедшем времени");
+            throw new BadRequestException("Бронь в прошедшем времени");
         }
         if (booking.getEnd().isBefore(booking.getStart())) {
-            throw new ValidationException("Завершение брони раньше ее регистрации");
+            throw new BadRequestException("Завершение брони раньше ее регистрации");
         }
 
-        if (userId.equals(booking.getItem().getOwner().getId())) {
-            throw new ValidationException("Предмет не может быть забронирован у своего обладателя");
-        }
     }
 
 }

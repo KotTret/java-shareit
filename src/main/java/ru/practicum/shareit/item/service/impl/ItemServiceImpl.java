@@ -5,16 +5,22 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import ru.practicum.shareit.booking.dao.BookingRepository;
+import ru.practicum.shareit.booking.mapper.BookingMapper;
+import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.exception.model.ObjectNotFoundException;
 import ru.practicum.shareit.item.dao.ItemRepository;
 import ru.practicum.shareit.item.dto.ItemDto;
+import ru.practicum.shareit.item.mapper.ItemMapper;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.service.ItemService;
 import ru.practicum.shareit.user.dao.UserRepository;
 import ru.practicum.shareit.util.UtilMergeProperty;
 
-import java.util.ArrayList;
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -25,13 +31,17 @@ public class ItemServiceImpl implements ItemService {
     private final ItemRepository itemRepository;
     private final UserRepository userRepository;
 
+    private final BookingRepository bookingRepository;
+
 
     @Override
-    public List<Item> getAll(Long userId) {
+    public List<ItemDto> getAll(Long userId) {
         List<Item> items = itemRepository.findAllByOwner(userRepository.findById(userId)
                 .orElseThrow(() -> new ObjectNotFoundException("Пользователь не найден, проверьте верно ли указан Id")));
+        List<ItemDto> itemsDto = items.stream().map(ItemMapper::toDto).collect(Collectors.toList());
+        itemsDto.forEach(this::addLastAndNextBooking);
         log.info("Запрошено количество вещей: {}", items.size());
-        return items;
+        return itemsDto;
     }
 
     @Override
@@ -77,5 +87,15 @@ public class ItemServiceImpl implements ItemService {
                         new ObjectNotFoundException("Пользователь не найден, проверьте верно ли указан Id"))).orElseThrow(() ->
                 new ObjectNotFoundException(String.format("Item c id = %d не найден для пользователя c id = %d",
                         itemId, userId)));
+    }
+
+    private void addLastAndNextBooking(ItemDto dto) {
+        Optional<Booking> lastBooking = bookingRepository.findByItemIdAndEndBeforeOrderByEndDesc(dto.getId()
+                , LocalDateTime.now());
+        lastBooking.ifPresent(booking -> dto.setLastBooking(BookingMapper.toDtoShort(booking)));
+
+        Optional<Booking> nextBooking = bookingRepository.findByItemIdAndStartAfterOrderByStart(dto.getId()
+                , LocalDateTime.now());
+        nextBooking.ifPresent((booking -> dto.setNextBooking(BookingMapper.toDtoShort(booking))));
     }
 }
