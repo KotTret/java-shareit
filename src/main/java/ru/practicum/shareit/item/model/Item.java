@@ -1,7 +1,6 @@
 package ru.practicum.shareit.item.model;
 
 import lombok.*;
-import ru.practicum.shareit.request.ItemRequest;
 import ru.practicum.shareit.user.model.User;
 
 import javax.persistence.*;
@@ -32,10 +31,6 @@ public class Item {
 
     @Column(name = "is_available")
     private Boolean available;
-
-    @OneToOne(cascade = CascadeType.REMOVE)
-    @JoinColumn(name = "request_id")
-    private ItemRequest request;
 
 
     @Override

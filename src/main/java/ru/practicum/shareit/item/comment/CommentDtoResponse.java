@@ -1,22 +1,27 @@
 package ru.practicum.shareit.item.comment;
 
 import lombok.*;
-import ru.practicum.shareit.item.model.Item;
 
-import javax.validation.constraints.NotBlank;
 import java.time.LocalDateTime;
 
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class CommentDto {
+@Builder
+public class CommentDtoResponse {
 
     private Long id;
-    @NotBlank(message = "Комментарий не может быть пустым")
     private String text;
-    private Item item;
+    private ItemCom item;
     private Long authorId;
     private String authorName;
     private LocalDateTime created;
+
+    @Data
+    public static class ItemCom {
+        private final long id;
+        private final String name;
+    }
+
 }

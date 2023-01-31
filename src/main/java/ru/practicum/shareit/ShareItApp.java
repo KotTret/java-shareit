@@ -14,8 +14,4 @@ public class ShareItApp {
 
 	}
 
-	@Bean
-	public ModelMapper modelMapper() {
-		return new ModelMapper();
-	}
 }

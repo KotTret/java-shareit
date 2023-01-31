@@ -9,6 +9,8 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.exception.model.ObjectNotFoundException;
 import ru.practicum.shareit.exception.model.ValidationException;
 import ru.practicum.shareit.user.dao.UserRepository;
+import ru.practicum.shareit.user.dto.UserDto;
+import ru.practicum.shareit.user.mapper.UserMapper;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.service.UserService;
 import ru.practicum.shareit.util.UtilMergeProperty;
@@ -22,40 +24,43 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
 
-    @Transactional(propagation = Propagation.REQUIRED)
+    @Transactional(propagation = Propagation.REQUIRED, readOnly = true)
     @Override
-    public List<User> getAll() {
+    public List<UserDto> getAll() {
         List<User> users = userRepository.findAll();
         log.info("Текущее количество пользователей: {}", users.size());
-        return users;
+        return UserMapper.toDtoList(users);
     }
 
-    @Transactional(propagation = Propagation.REQUIRED)
+    @Transactional(propagation = Propagation.REQUIRED, readOnly = true)
     @Override
-    public User get(Long userId) {
+    public UserDto get(Long userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ObjectNotFoundException("Пользователь не найден, проверьте верно ли указан Id"));
         log.info("Запрошена информация о пользователе: {}", user.getEmail());
-        return user;
+        return UserMapper.toDto(user);
     }
 
     @Transactional(propagation = Propagation.REQUIRED)
     @Override
-    public User create(User user) {
+    public UserDto create(UserDto userDto) {
+        User user = UserMapper.toEntity(userDto);
         try {
             userRepository.save(user);
         } catch (DataIntegrityViolationException e) {
             throw new ValidationException("Данный email уже занят", e);
         }
         log.info("Добавлен пользователь: {}", user.getEmail());
-        return user;
+        return UserMapper.toDto(user);
     }
 
     @Transactional(propagation = Propagation.REQUIRED)
     @Override
-    public User update(Long userId, User user) {
+    public UserDto update(Long userId, UserDto userDto) {
+        User user = UserMapper.toEntity(userDto);
         user.setId(userId);
-        User userTarget = get(userId);
+        User userTarget =userRepository.findById(userId)
+                .orElseThrow(() -> new ObjectNotFoundException("Пользователь не найден, проверьте верно ли указан Id"));
         try {
             UtilMergeProperty.copyProperties(user, userTarget);
             userRepository.flush();
@@ -63,7 +68,7 @@ public class UserServiceImpl implements UserService {
             throw new ValidationException("Данный email уже занят", e);
         }
         log.info("Информация о пользователе обновлена: {}", user.getEmail());
-        return userTarget;
+        return UserMapper.toDto(userTarget);
     }
 
     @Transactional(propagation = Propagation.REQUIRED)
