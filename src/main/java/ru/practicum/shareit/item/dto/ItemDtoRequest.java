@@ -1,8 +1,9 @@
 package ru.practicum.shareit.item.dto;
 
-import lombok.*;
-import ru.practicum.shareit.booking.dto.BookingDtoShort;
-import ru.practicum.shareit.item.comment.CommentDto;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import ru.practicum.shareit.util.validation.Create;
 import ru.practicum.shareit.util.validation.Update;
 import ru.practicum.shareit.util.validation.notblanknull.NotBlankNull;
@@ -10,13 +11,12 @@ import ru.practicum.shareit.util.validation.notblanknull.NotBlankNull;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import java.util.List;
 
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class ItemDto {
+public class ItemDtoRequest {
 
     private Long id;
     @NotBlankNull(groups = {Update.class})
@@ -30,11 +30,5 @@ public class ItemDto {
 
     @NotNull(groups = {Create.class})
     private Boolean available;
-
-    private BookingDtoShort lastBooking;
-
-    private BookingDtoShort nextBooking;
-
-    private List<CommentDto> comments;
 
 }

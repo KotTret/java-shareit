@@ -31,7 +31,7 @@ public class Booking {
     @JoinColumn(name = "booker_id")
     private User booker;
 
-    @OneToOne(cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
+    @ManyToOne(cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
     @JoinColumn(name = "item_id")
     private Item item;
 

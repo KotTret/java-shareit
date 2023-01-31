@@ -2,8 +2,6 @@ package ru.practicum.shareit.booking.dto;
 
 import lombok.*;
 import ru.practicum.shareit.booking.model.Status;
-import ru.practicum.shareit.item.model.Item;
-import ru.practicum.shareit.user.model.User;
 
 import java.time.LocalDateTime;
 
@@ -22,8 +20,19 @@ public class BookingDto {
 
     private Status status;
 
-    private User booker;
+    private Booker booker;
 
-    private Item item;
+    private ItemBK item;
 
+    @Data
+    public static class Booker {
+        private final long id;
+        private final String name;
+    }
+
+    @Data
+    public static class ItemBK {
+        private final long id;
+        private final String name;
+    }
 }
