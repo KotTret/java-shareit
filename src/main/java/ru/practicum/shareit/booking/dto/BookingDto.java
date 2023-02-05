@@ -1,30 +1,38 @@
 package ru.practicum.shareit.booking.dto;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import java.time.Duration;
-import java.time.LocalDate;
+import lombok.*;
+import ru.practicum.shareit.booking.model.Status;
 
-@Getter
+import java.time.LocalDateTime;
+
 @AllArgsConstructor
+@NoArgsConstructor
+@Getter
+@Setter
+@Builder
 public class BookingDto {
 
-    private Integer idBooking;
+    private Long id;
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
-    private LocalDate startDate;
+    private LocalDateTime start;
 
-    private Duration duration;
+    private LocalDateTime end;
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
-    private LocalDate endDate;
+    private Status status;
 
-    private Integer ownerId;
+    private Booker booker;
 
-    private Integer tenantId;
+    private ItemBK item;
 
-    private Integer itemId;
+    @Data
+    public static class Booker {
+        private final long id;
+        private final String name;
+    }
 
-    private boolean isConfirmFromOwner;
+    @Data
+    public static class ItemBK {
+        private final long id;
+        private final String name;
+    }
 }

@@ -1,25 +1,51 @@
 package ru.practicum.shareit.booking.mapper;
 
-import lombok.RequiredArgsConstructor;
-import org.modelmapper.ModelMapper;
-import org.springframework.stereotype.Component;
-import ru.practicum.shareit.booking.Booking;
+import lombok.experimental.UtilityClass;
+import ru.practicum.shareit.booking.dto.BookingDtoShortRequest;
+import ru.practicum.shareit.booking.dto.BookingDtoShortResponse;
+import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.dto.BookingDto;
 
-import java.util.Objects;
+import java.util.List;
+import java.util.stream.Collectors;
 
-@Component
-@RequiredArgsConstructor
+
+@UtilityClass
 public class BookingMapper {
 
-    private final ModelMapper mapper;
-
-
-    public Booking toEntity(BookingDto dto) {
-        return Objects.isNull(dto) ? null : mapper.map(dto, Booking.class);
+    public static BookingDto toDto(Booking entity) {
+        return BookingDto
+                .builder()
+                .id(entity.getId())
+                .start(entity.getStart())
+                .end(entity.getEnd())
+                .status(entity.getStatus())
+                .item(new BookingDto.ItemBK(entity.getItem().getId(), entity.getItem().getName()))
+                .booker(new BookingDto.Booker(entity.getBooker().getId(), entity.getBooker().getName()))
+                .build();
     }
 
-    public BookingDto toDto(Booking entity) {
-        return Objects.isNull(entity) ? null : mapper.map(entity, BookingDto.class);
+    public static BookingDtoShortResponse toDtoShortOut(Booking entity) {
+        return BookingDtoShortResponse
+                .builder()
+                .id(entity.getId())
+                .start(entity.getStart())
+                .end(entity.getEnd())
+                .itemId(entity.getItem().getId())
+                .bookerId(entity.getBooker().getId())
+                .build();
+    }
+
+    public static Booking toEntity(BookingDtoShortRequest dto) {
+        return Booking
+                .builder()
+                .id(dto.getId())
+                .start(dto.getStart())
+                .end(dto.getEnd())
+                .build();
+    }
+
+    public static List<BookingDto> toDtoList(List<Booking> bookings) {
+        return bookings.stream().map(BookingMapper::toDto).collect(Collectors.toList());
     }
 }

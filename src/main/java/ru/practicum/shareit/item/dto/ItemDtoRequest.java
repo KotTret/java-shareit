@@ -1,6 +1,9 @@
 package ru.practicum.shareit.item.dto;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import ru.practicum.shareit.util.validation.Create;
 import ru.practicum.shareit.util.validation.Update;
 import ru.practicum.shareit.util.validation.notblanknull.NotBlankNull;
@@ -13,9 +16,9 @@ import javax.validation.constraints.Size;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class ItemDto {
+public class ItemDtoRequest {
 
-    private Integer id;
+    private Long id;
     @NotBlankNull(groups = {Update.class})
     @NotBlank(message = "Название не может быть пустым.", groups = {Create.class})
     private String name;
