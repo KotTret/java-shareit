@@ -15,20 +15,24 @@ import ru.practicum.shareit.util.validation.Create;
 import ru.practicum.shareit.util.validation.Update;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Positive;
+import javax.validation.constraints.PositiveOrZero;
 import java.util.List;
 
 
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/items")
+@Validated
 public class ItemController {
 
     private final ItemService itemService;
 
     @GetMapping
-    public List<ItemDtoResponseLong> getAll(@RequestHeader("X-Sharer-User-Id") Long userId) {
-        return itemService.getAll(userId);
-
+    public List<ItemDtoResponseLong> getAll(@RequestHeader("X-Sharer-User-Id") Long userId,
+                                            @PositiveOrZero @RequestParam(defaultValue = "0") int from,
+                                            @Positive @RequestParam(defaultValue = "10")  int size) {
+        return itemService.getAll(userId, from, size);
     }
 
     @GetMapping("/{itemId}")
@@ -51,10 +55,11 @@ public class ItemController {
     }
 
     @GetMapping("/search")
-    public List<ItemDtoResponseLong> search(@RequestParam("text") String text) {
+    public List<ItemDtoResponseLong> search(@RequestParam("text") String text,
+                                            @PositiveOrZero @RequestParam(defaultValue = "0") int from,
+                                            @Positive @RequestParam(defaultValue = "10") int size) {
         if (!text.isBlank()) {
-            itemService.search(text);
-            return itemService.search(text);
+            return itemService.search(text, from, size);
         } else {
             return List.of();
         }

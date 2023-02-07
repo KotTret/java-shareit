@@ -10,18 +10,22 @@ import ru.practicum.shareit.user.service.UserService;
 import ru.practicum.shareit.util.validation.Create;
 import ru.practicum.shareit.util.validation.Update;
 
+import javax.validation.constraints.Positive;
+import javax.validation.constraints.PositiveOrZero;
 import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(path = "/users")
+@Validated
 public class UserController {
 
     private final UserService userService;
 
-    @GetMapping
-    public List<UserDto> getAll() {
-        return userService.getAll();
+    @GetMapping()
+    public List<UserDto> getAll(@PositiveOrZero @RequestParam(defaultValue = "0")   int from,
+                                 @Positive @RequestParam(defaultValue = "10")  int size) {
+        return userService.getAll(from, size);
     }
 
     @GetMapping("/{userId}")

@@ -16,6 +16,7 @@ public class ItemMapper {
     public static Item toEntity(ItemDtoRequest dto) {
         return Item
                 .builder()
+                .id(dto.getId())
                 .name(dto.getName())
                 .description(dto.getDescription())
                 .available(dto.getAvailable())
@@ -39,11 +40,16 @@ public class ItemMapper {
                 .name(entity.getName())
                 .description(entity.getDescription())
                 .available(entity.getAvailable())
+                .requestId(entity.getItemRequest() == null ? null : entity.getItemRequest().getId())
                 .build();
     }
 
-    public static List<ItemDtoResponseLong> toDtoList(List<Item> items) {
+    public static List<ItemDtoResponseLong> toDtoLongList(List<Item> items) {
         return items.stream().map(ItemMapper::toDtoResponseLong).collect(Collectors.toList());
+    }
+
+    public static List<ItemDtoResponseShort> toDtoShortList(List<Item> items) {
+        return items.stream().map(ItemMapper::toDtoResponseShort).collect(Collectors.toList());
     }
 
 }
