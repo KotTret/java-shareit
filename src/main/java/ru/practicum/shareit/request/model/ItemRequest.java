@@ -1,9 +1,13 @@
-package ru.practicum.shareit.request;
+package ru.practicum.shareit.request.model;
 
 import lombok.*;
+import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.model.User;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Setter
@@ -17,7 +21,7 @@ public class ItemRequest {
     @Id
     @Column(name = "request_id", nullable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private Long id;
 
 
     @ManyToOne(cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
@@ -26,5 +30,10 @@ public class ItemRequest {
 
     @Column(name = "description")
     private String description;
+
+    @Column(name = "created")
+    private LocalDateTime created;
+    @OneToMany(mappedBy = "itemRequest")
+    private List<Item> items = new ArrayList<>();
 
 }

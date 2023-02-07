@@ -9,6 +9,7 @@ public class CommentMapper {
     public static Comment toEntity(CommentDtoRequest dto) {
         return Comment
                 .builder()
+                .id(dto.getId())
                 .text(dto.getText())
                 .build();
     }

@@ -10,7 +10,9 @@ import ru.practicum.shareit.util.validation.notblanknull.NotBlankNull;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Positive;
 import javax.validation.constraints.Size;
+import java.util.Objects;
 
 @Getter
 @Setter
@@ -31,4 +33,30 @@ public class ItemDtoRequest {
     @NotNull(groups = {Create.class})
     private Boolean available;
 
+    @Positive(groups = {Create.class, Update.class})
+    private Long requestId;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ItemDtoRequest that = (ItemDtoRequest) o;
+        return Objects.equals(id, that.id) && Objects.equals(name, that.name) && Objects.equals(description, that.description) && Objects.equals(available, that.available) && Objects.equals(requestId, that.requestId);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, name, description, available, requestId);
+    }
+
+    @Override
+    public String toString() {
+        return "ItemDtoRequest{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", description='" + description + '\'' +
+                ", available=" + available +
+                ", requestId=" + requestId +
+                '}';
+    }
 }
