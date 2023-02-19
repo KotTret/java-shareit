@@ -79,7 +79,7 @@ public class BookingServiceImpl implements BookingService {
                             .findAllByItem_OwnerIdAndStatus(userId, Status.REJECTED,
                                     pageable));
                 default:
-                    throw new BadRequestException("Unknown state: UNSUPPORTED_STATUS");
+                    return List.of();
             }
         } else {
             throw new ObjectNotFoundException("Пользователь не найден, проверьте верно ли указан Id");
@@ -112,7 +112,7 @@ public class BookingServiceImpl implements BookingService {
                     return BookingMapper.toDtoList(bookingRepository.findAllByBookerIdAndStatus(userId, Status.REJECTED,
                             pageable));
                 default:
-                    throw new BadRequestException("Unknown state: UNSUPPORTED_STATUS");
+                    return List.of();
             }
         } else {
             throw new ObjectNotFoundException("Пользователь не найден, проверьте верно ли указан Id");

@@ -190,6 +190,7 @@ class BookingServiceImplTest {
         assertThrows(ObjectNotFoundException.class, () ->  bookingService.findAllByOwnerId(userId, state, 0, 10));
     }
 
+
     @Test
     void findAllByBookerId_whenStateIsAll() {
         long userId = 1L;

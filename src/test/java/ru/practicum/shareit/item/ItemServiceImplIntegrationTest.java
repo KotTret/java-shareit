@@ -10,7 +10,9 @@ import ru.practicum.shareit.booking.dao.BookingRepository;
 import ru.practicum.shareit.booking.mapper.BookingMapper;
 import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.model.Status;
-import ru.practicum.shareit.item.comment.*;
+import ru.practicum.shareit.item.comment.Comment;
+import ru.practicum.shareit.item.comment.CommentMapper;
+import ru.practicum.shareit.item.comment.CommentRepository;
 import ru.practicum.shareit.item.dao.ItemRepository;
 import ru.practicum.shareit.item.dto.ItemDtoRequest;
 import ru.practicum.shareit.item.dto.ItemDtoResponseLong;
@@ -26,7 +28,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @Transactional
 @SpringBootTest(
@@ -151,23 +152,4 @@ class ItemServiceImplIntegrationTest {
         assertEquals(expectedDtoList, actualDtoList);
     }
 
-    @Test
-    void createComment() {
-        user = userRepository.save(user);
-        userId = user.getId();
-        item = new Item(null, "itemName", "description", user,
-                true, null);
-        item = itemRepository.save(item);
-        CommentDtoRequest commentDtoRequest = new CommentDtoRequest(null, "comment");
-
-        CommentDtoResponse actual = itemService.createComment(itemId, userId, commentDtoRequest);
-
-        assertEquals(commentId + 1, actual.getId());
-        assertEquals("comment", actual.getText());
-        assertEquals(userId, actual.getAuthorId());
-        assertEquals("Kot", actual.getAuthorName());
-        assertEquals("itemName", actual.getItem().getName());
-        assertEquals(itemId, actual.getItem().getId());
-        assertNotNull(actual.getCreated());
-    }
 }

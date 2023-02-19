@@ -33,13 +33,4 @@ public class ItemRequestDtoShort {
         return Objects.hash(id, description, requesterId, created);
     }
 
-    @Override
-    public String toString() {
-        return "ItemRequestDtoShort{" +
-                "id=" + id +
-                ", description='" + description + '\'' +
-                ", requesterId=" + requesterId +
-                ", created=" + created +
-                '}';
-    }
 }

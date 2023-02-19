@@ -189,6 +189,24 @@ class BookingControllerTest {
 
     @SneakyThrows
     @Test
+    void create_whenEndIsNull_thenBadRequestExceptionThrown() {
+        long userId = 1L;
+        long itemId = 1L;
+        BookingDtoShortRequest bookingDtoShortRequest = new BookingDtoShortRequest(1L, start, null, itemId);
+        BookingDto bookingDto = new BookingDto(1L, start, end, Status.WAITING, null, null);
+        when(bookingService.create(any(), anyLong(), anyLong())).thenReturn(bookingDto);
+
+        mockMvc.perform(post("/bookings")
+                        .header("X-Sharer-User-Id", userId)
+                        .contentType("application/json")
+                        .content(objectMapper.writeValueAsString(bookingDtoShortRequest)))
+                .andExpect(status().isBadRequest());
+
+        verify(bookingService, never()).create(any(), anyLong(), anyLong());
+    }
+
+    @SneakyThrows
+    @Test
     void create_whenEndIsNow_thenBadRequestExceptionThrown() {
         long userId = 1L;
         long itemId = 1L;
