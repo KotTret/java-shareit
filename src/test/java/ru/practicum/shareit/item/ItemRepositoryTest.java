@@ -36,20 +36,19 @@ class ItemRepositoryTest {
     private  Item item2;
     private  ItemRequest itemRequest;
 
-     void create() {
-        user = new User(1L, "kot@tret.ru", "Kot");
-        item1 = new Item(1L, "item Name", "description", user, true, null);
-        item2 = new Item(2L, "item Name2", "description2", user,
-                true, null);
-        itemRequest = new ItemRequest(1L, user, "description", LocalDateTime.now(), List.of(item1));
-    }
 
     @BeforeEach
     void add() {
-        create();
+        user = new User(1L, "kot@tret.ru", "Kot");
         userRepository.save(user);
+
+        item1 = new Item(1L, "item Name", "description", user, true, null);
         itemRepository.save(item1);
+        item2 = new Item(2L, "item Name2", "description2", user,
+                true, null);
         itemRepository.save(item2);
+
+        itemRequest = new ItemRequest(1L, user, "description", LocalDateTime.now(), List.of(item1));
         itemRequestRepository.save(itemRequest);
     }
 
