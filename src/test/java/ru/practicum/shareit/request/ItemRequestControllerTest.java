@@ -17,7 +17,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -75,6 +75,49 @@ class ItemRequestControllerTest {
                 .getContentAsString();
 
         assertEquals(objectMapper.writeValueAsString(List.of(itemRequestDtoLong)), result);
+    }
+
+    @SneakyThrows
+    @Test
+    void getAllByRequester_whenSizeIsNotValid_thenConstraintViolationExceptionThrown() {
+        int from = 0;
+        int size = -1;
+        long userId = 1;
+        mockMvc.perform(get("/requests")
+                        .header("X-Sharer-User-Id", userId)
+                        .param("from", String.valueOf(from))
+                        .param("size", String.valueOf(size)))
+                .andDo(print())
+                .andExpect(status().isBadRequest());
+
+        verify(service, never()).getAllByRequester(any(), anyInt(), anyInt());
+
+        size = 0;
+        mockMvc.perform(get("/requests")
+                        .header("X-Sharer-User-Id", userId)
+                        .param("from", String.valueOf(from))
+                        .param("size", String.valueOf(size)))
+                .andDo(print())
+                .andExpect(status().isBadRequest());
+
+        verify(service, never()).getAllByRequester(any(), anyInt(), anyInt());
+    }
+
+    @SneakyThrows
+    @Test
+    void getAllByRequester_whenFromIsNotValid_thenConstraintViolationExceptionThrown() {
+        int from = -1;
+        int size = 10;
+        long userId = 1;
+        mockMvc.perform(get("/requests")
+                        .header("X-Sharer-User-Id", userId)
+                        .param("from", String.valueOf(from))
+                        .param("size", String.valueOf(size)))
+                .andDo(print())
+                .andExpect(status().isBadRequest());
+
+        verify(service, never()).getAllByRequester(any(), anyInt(), anyInt());
+
     }
 
     @SneakyThrows

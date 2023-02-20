@@ -8,6 +8,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import ru.practicum.shareit.exception.model.ObjectNotFoundException;
+import ru.practicum.shareit.item.dao.ItemRepository;
 import ru.practicum.shareit.request.dao.ItemRequestRepository;
 import ru.practicum.shareit.request.dto.ItemRequestDtoLong;
 import ru.practicum.shareit.request.dto.ItemRequestDtoShort;
@@ -35,6 +36,9 @@ class ItemRequestServiceImplTest {
 
     @Mock
     private ItemRequestRepository repository;
+
+    @Mock
+    private ItemRepository itemRepository;
 
     @Captor
     private ArgumentCaptor<ItemRequest> itemRequestArgumentCaptor;
@@ -74,9 +78,10 @@ class ItemRequestServiceImplTest {
     void getAllByRequester_whenOk_thenFoundItemRequestDtoList() {
         long userId = 1L;
         User user = new User(userId, "kot@tret.ru", "Kot");
-        ItemRequest itemRequest = new ItemRequest(1L, user, "desc", null, List.of());
+        ItemRequest itemRequest = new ItemRequest(1L, user, "desc", null);
         ItemRequestDtoLong itemRequestDtoLong = new ItemRequestDtoLong(1L, "desc", userId, null, List.of());
         when(userRepository.existsById(anyLong())).thenReturn(true);
+        when(itemRepository.findByItemRequestIdIn(any(), any())).thenReturn(List.of());
         when(repository.findAllByRequesterId(anyLong(), any())).thenReturn(List.of(itemRequest));
 
         List<ItemRequestDtoLong> expectedDtoList = List.of(itemRequestDtoLong);
@@ -89,9 +94,10 @@ class ItemRequestServiceImplTest {
     void getAll_whenOk_thenFoundItemRequestDtoList() {
         long userId = 1L;
         User user = new User(userId, "kot@tret.ru", "Kot");
-        ItemRequest itemRequest = new ItemRequest(1L, user, "desc", null, List.of());
+        ItemRequest itemRequest = new ItemRequest(1L, user, "desc", null);
         ItemRequestDtoLong itemRequestDtoLong = new ItemRequestDtoLong(1L, "desc", userId, null, List.of());
         when(userRepository.existsById(anyLong())).thenReturn(true);
+        when(itemRepository.findByItemRequestIdIn(any(), any())).thenReturn(List.of());
         when(repository.findAllByUserId(anyLong(), any())).thenReturn(List.of(itemRequest));
 
         List<ItemRequestDtoLong> expectedDtoList = List.of(itemRequestDtoLong);
@@ -116,8 +122,9 @@ class ItemRequestServiceImplTest {
         long userId = 1L;
         long requestId = 1L;
         User user = new User(userId, "kot@tret.ru", "Kot");
-        ItemRequest itemRequest = new ItemRequest(1L, user, "desc", null, List.of());
+        ItemRequest itemRequest = new ItemRequest(1L, user, "desc", null);
         when(userRepository.existsById(anyLong())).thenReturn(true);
+        when(itemRepository.findByItemRequestId(any(), any())).thenReturn(List.of());
         when(repository.findById(anyLong())).thenReturn(Optional.of(itemRequest));
 
         ItemRequestDtoLong expected = new ItemRequestDtoLong(1L, "desc", userId, null, List.of());

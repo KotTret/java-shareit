@@ -95,7 +95,7 @@ public class ErrorHandler {
     public ErrorResponse handleRuntimeException(final Throwable e) {
         log.warn("500 {}", e.getMessage(), e);
         return new ErrorResponse(
-                "Непредвиденная ошибка"
+              e.getMessage()
         );
     }
 }

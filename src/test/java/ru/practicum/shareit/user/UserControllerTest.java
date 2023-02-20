@@ -58,6 +58,40 @@ class UserControllerTest {
 
     @SneakyThrows
     @Test
+    void getAll_whenFromIsNotValid_thenConstraintViolationExceptionThrown() {
+        int from = -1;
+        int size = 20;
+        mockMvc.perform(get("/users")
+                        .param("from", String.valueOf(from))
+                        .param("size", String.valueOf(size)))
+                .andDo(print())
+                .andExpect(status().isBadRequest());
+        verify(userService, never()).getAll(from, size);
+    }
+
+    @SneakyThrows
+    @Test
+    void getAll_whenSizeIsNotValid_thenConstraintViolationExceptionThrown() {
+        int from = 1;
+        int size = -1;
+        mockMvc.perform(get("/users")
+                        .param("from", String.valueOf(from))
+                        .param("size", String.valueOf(size)))
+                .andDo(print())
+                .andExpect(status().isBadRequest());
+        verify(userService, never()).getAll(from, size);
+
+        size = 0;
+        mockMvc.perform(get("/users")
+                        .param("from", String.valueOf(from))
+                        .param("size", String.valueOf(size)))
+                .andDo(print())
+                .andExpect(status().isBadRequest());
+        verify(userService, never()).getAll(from, size);
+    }
+
+    @SneakyThrows
+    @Test
     void getAll_whenRequestParamIsDefault() {
 
         mockMvc.perform(get("/users"))

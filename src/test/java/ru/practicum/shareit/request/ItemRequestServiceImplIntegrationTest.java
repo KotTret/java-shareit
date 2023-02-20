@@ -46,7 +46,7 @@ class ItemRequestServiceImplIntegrationTest {
         user = userRepository.save(user);
         userId = user.getId();
 
-        itemRequest = new ItemRequest(null, user, "desc", created, List.of());
+        itemRequest = new ItemRequest(null, user, "desc", created);
         itemRequest = repository.save(itemRequest);
         requestId = itemRequest.getId();
 

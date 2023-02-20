@@ -62,6 +62,66 @@ class BookingControllerTest {
 
     @SneakyThrows
     @Test
+    void getAll_whenFromIsNotValid_thenConstraintViolationExceptionThrown() {
+        String fromStr = "fff";
+        mockMvc.perform(get("/bookings")
+                        .header("X-Sharer-User-Id", 1)
+                        .param("state", "ALL")
+                        .param("from", fromStr)
+                        .param("size", String.valueOf(10)))
+                .andDo(print())
+                .andExpect(status().isInternalServerError());
+        verify(bookingService, never()).findAllByBookerId(anyLong(), any(), anyInt(), anyInt());
+
+        int fromInt = -1;
+        mockMvc.perform(get("/bookings")
+                        .header("X-Sharer-User-Id", 1)
+                        .param("state", "ALL")
+                        .param("from", String.valueOf(fromInt))
+                        .param("size", String.valueOf(10)))
+                .andDo(print())
+                .andExpect(status().isBadRequest());
+        verify(bookingService, never()).findAllByBookerId(anyLong(), any(), anyInt(), anyInt());
+    }
+
+    @SneakyThrows
+    @Test
+    void getAll_whenSizeIsNotValid_thenConstraintViolationExceptionThrown() {
+        String sizeStr = "fff";
+        mockMvc.perform(get("/bookings")
+                        .header("X-Sharer-User-Id", 1)
+                        .param("state", "ALL")
+                        .param("from", String.valueOf(1))
+                        .param("size", sizeStr))
+                .andDo(print())
+                .andExpect(status().isInternalServerError());
+        verify(bookingService, never()).findAllByBookerId(anyLong(), any(), anyInt(), anyInt());
+
+        int sizeInt = -1;
+        mockMvc.perform(get("/bookings")
+                        .header("X-Sharer-User-Id", 1)
+                        .param("state", "ALL")
+                        .param("from", String.valueOf(1))
+                        .param("size", String.valueOf(sizeInt)))
+                .andDo(print())
+                .andExpect(status().isBadRequest());
+        verify(bookingService, never()).findAllByBookerId(anyLong(), any(), anyInt(), anyInt());
+
+        sizeInt = 0;
+        mockMvc.perform(get("/bookings")
+                        .header("X-Sharer-User-Id", 1)
+                        .param("state", "ALL")
+                        .param("from", String.valueOf(1))
+                        .param("size", String.valueOf(sizeInt)))
+                .andDo(print())
+                .andExpect(status().isBadRequest());
+        verify(bookingService, never()).findAllByBookerId(anyLong(), any(), anyInt(), anyInt());
+    }
+
+
+
+    @SneakyThrows
+    @Test
     void getAll_whenIsNotCorrectState_thenBadRequestExceptionThrown() {
         mockMvc.perform(get("/bookings")
                         .header("X-Sharer-User-Id", 1)
@@ -90,10 +150,6 @@ class BookingControllerTest {
                 .getContentAsString();
 
         assertEquals(objectMapper.writeValueAsString(bookingDto), result);
-    }
-
-    @Test
-    void getAllByOwner() {
     }
 
     @SneakyThrows

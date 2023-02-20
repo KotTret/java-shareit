@@ -1,6 +1,6 @@
 package ru.practicum.shareit.request.mapper;
 
-import ru.practicum.shareit.item.mapper.ItemMapper;
+import lombok.experimental.UtilityClass;
 import ru.practicum.shareit.request.dto.ItemRequestDtoLong;
 import ru.practicum.shareit.request.dto.ItemRequestDtoShort;
 import ru.practicum.shareit.request.model.ItemRequest;
@@ -8,6 +8,7 @@ import ru.practicum.shareit.request.model.ItemRequest;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@UtilityClass
 public class ItemRequestMapper {
 
     public static ItemRequest toEntity(ItemRequestDtoShort dto) {
@@ -36,7 +37,6 @@ public class ItemRequestMapper {
                 .requesterId(entity.getRequester().getId())
                 .created(entity.getCreated())
                 .description(entity.getDescription())
-                .items(ItemMapper.toDtoShortList(entity.getItems()))
                 .build();
     }
 

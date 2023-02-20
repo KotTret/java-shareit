@@ -78,7 +78,7 @@ class ItemServiceImplTest {
                 true, null);
         itemDtoRequest = new ItemDtoRequest(1L, "itemName", "description", true, 1L);
 
-        itemRequest = new ItemRequest(1L, new User(), "description", null,null);
+        itemRequest = new ItemRequest(1L, new User(), "description", null);
 
         booking = new Booking(1L, null, null, user, item, Status.WAITING);
 

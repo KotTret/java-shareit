@@ -81,7 +81,7 @@ class ItemServiceImplIntegrationTest {
         comment = commentRepository.save(comment);
         commentId = comment.getId();
 
-        itemRequest = new ItemRequest(null, user, "description", LocalDateTime.now(),null);
+        itemRequest = new ItemRequest(null, user, "description", LocalDateTime.now());
         itemRequest = itemRequestRepository.save(itemRequest);
         requestId = itemRequest.getId();
 

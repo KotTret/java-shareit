@@ -2,9 +2,7 @@ package ru.practicum.shareit.request.dto;
 
 import lombok.*;
 import ru.practicum.shareit.item.dto.ItemDtoResponseShort;
-import ru.practicum.shareit.util.validation.Create;
 
-import javax.validation.constraints.NotBlank;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
@@ -16,7 +14,6 @@ import java.util.Objects;
 @Builder
 public class ItemRequestDtoLong {
     private Long id;
-    @NotBlank(message = "Описание не может быть пустым.", groups = Create.class)
     private String description;
     private Long requesterId;
     private LocalDateTime created;
