@@ -10,6 +10,7 @@ import ru.practicum.shareit.util.validation.notblanknull.NotBlankNull;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Positive;
 import javax.validation.constraints.Size;
 
 @Getter
@@ -30,5 +31,8 @@ public class ItemDtoRequest {
 
     @NotNull(groups = {Create.class})
     private Boolean available;
+
+    @Positive(groups = {Create.class, Update.class})
+    private Long requestId;
 
 }

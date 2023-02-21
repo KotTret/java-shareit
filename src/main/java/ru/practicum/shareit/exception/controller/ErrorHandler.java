@@ -14,6 +14,7 @@ import ru.practicum.shareit.exception.model.ErrorResponse;
 import ru.practicum.shareit.exception.model.ObjectNotFoundException;
 import ru.practicum.shareit.exception.model.ValidationException;
 
+import javax.validation.ConstraintViolationException;
 import java.util.List;
 
 @RestControllerAdvice
@@ -31,6 +32,15 @@ public class ErrorHandler {
         }
         return new ErrorResponse(
                 errorMessage.toString()
+        );
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse handleConstraintViolationException(final ConstraintViolationException e) {
+        log.info("400 {}", e.getMessage());
+        return new ErrorResponse(
+                e.getMessage()
         );
     }
 
@@ -85,7 +95,7 @@ public class ErrorHandler {
     public ErrorResponse handleRuntimeException(final Throwable e) {
         log.warn("500 {}", e.getMessage(), e);
         return new ErrorResponse(
-                "Непредвиденная ошибка"
+              e.getMessage()
         );
     }
 }

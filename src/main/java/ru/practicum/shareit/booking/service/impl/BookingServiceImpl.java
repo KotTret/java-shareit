@@ -19,6 +19,7 @@ import ru.practicum.shareit.exception.model.ObjectNotFoundException;
 import ru.practicum.shareit.item.dao.ItemRepository;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.dao.UserRepository;
+import ru.practicum.shareit.util.page.MyPageRequest;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -48,36 +49,37 @@ public class BookingServiceImpl implements BookingService {
 
     @Transactional(propagation = Propagation.REQUIRED, readOnly = true)
     @Override
-    public List<BookingDto> findAllByOwnerId(Long userId, State state) {
+    public List<BookingDto> findAllByOwnerId(Long userId, State state, int from, int size) {
         if (userRepository.existsById(userId)) {
             log.info("Запрошена информация о бронированиях для всех вещей пользователя с id: {}, по статусу: {}",
                     userId, state);
+            MyPageRequest pageable = new MyPageRequest(from, size, Sort.by(Sort.Direction.DESC, "start"));
             switch (state) {
                 case ALL:
                     return BookingMapper.toDtoList(bookingRepository.findAllByItem_OwnerId(userId,
-                            Sort.by(Sort.Direction.DESC, "start")));
+                            pageable));
                 case CURRENT:
                     return BookingMapper.toDtoList(bookingRepository
                             .findAllByItem_OwnerIdAndStartBeforeAndEndAfter(userId, LocalDateTime.now(),
-                                    LocalDateTime.now(), Sort.by(Sort.Direction.DESC, "start")));
+                                    LocalDateTime.now(), pageable));
                 case PAST:
                     return BookingMapper.toDtoList(bookingRepository
                             .findAllByItem_OwnerIdAndEndBefore(userId, LocalDateTime.now(),
-                                    Sort.by(Sort.Direction.DESC, "start")));
+                                    pageable));
                 case FUTURE:
                     return BookingMapper.toDtoList(bookingRepository
                             .findAllByItem_OwnerIdAndStartAfter(userId, LocalDateTime.now(),
-                                    Sort.by(Sort.Direction.DESC, "start")));
+                                    pageable));
                 case WAITING:
                     return BookingMapper.toDtoList(bookingRepository
                             .findAllByItem_OwnerIdAndStatus(userId, Status.WAITING,
-                                    Sort.by(Sort.Direction.DESC, "start")));
+                                    pageable));
                 case REJECTED:
                     return BookingMapper.toDtoList(bookingRepository
                             .findAllByItem_OwnerIdAndStatus(userId, Status.REJECTED,
-                                    Sort.by(Sort.Direction.DESC, "start")));
+                                    pageable));
                 default:
-                    throw new BadRequestException("Unknown state: UNSUPPORTED_STATUS");
+                    return List.of();
             }
         } else {
             throw new ObjectNotFoundException("Пользователь не найден, проверьте верно ли указан Id");
@@ -86,30 +88,31 @@ public class BookingServiceImpl implements BookingService {
 
     @Transactional(propagation = Propagation.REQUIRED, readOnly = true)
     @Override
-    public List<BookingDto> findAllByBookerId(Long userId, State state) {
+    public List<BookingDto> findAllByBookerId(Long userId, State state, int from, int size) {
         if (userRepository.existsById(userId)) {
             log.info("Запрошена информация о всех бронированиях пользователя с id: {}, по статусу: {}", userId, state);
+            MyPageRequest pageable = new MyPageRequest(from, size, Sort.by(Sort.Direction.DESC, "start"));
             switch (state) {
                 case ALL:
                     return BookingMapper.toDtoList(bookingRepository.findAllByBookerId(userId,
-                            Sort.by(Sort.Direction.DESC, "start")));
+                            pageable));
                 case CURRENT:
                     return BookingMapper.toDtoList(bookingRepository.findAllByBookerIdAndStartBeforeAndEndAfter(userId,
-                            LocalDateTime.now(), LocalDateTime.now(), Sort.by(Sort.Direction.DESC, "start")));
+                            LocalDateTime.now(), LocalDateTime.now(), pageable));
                 case PAST:
                     return BookingMapper.toDtoList(bookingRepository.findAllByBookerIdAndEndBefore(userId,
-                            LocalDateTime.now(), Sort.by(Sort.Direction.DESC, "start")));
+                            LocalDateTime.now(),pageable));
                 case FUTURE:
                     return BookingMapper.toDtoList(bookingRepository.findAllByBookerIdAndStartAfter(userId,
-                            LocalDateTime.now(), Sort.by(Sort.Direction.DESC, "start")));
+                            LocalDateTime.now(), pageable));
                 case WAITING:
                     return BookingMapper.toDtoList(bookingRepository.findAllByBookerIdAndStatus(userId, Status.WAITING,
-                            Sort.by(Sort.Direction.DESC, "start")));
+                            pageable));
                 case REJECTED:
                     return BookingMapper.toDtoList(bookingRepository.findAllByBookerIdAndStatus(userId, Status.REJECTED,
-                            Sort.by(Sort.Direction.DESC, "start")));
+                            pageable));
                 default:
-                    throw new BadRequestException("Unknown state: UNSUPPORTED_STATUS");
+                    return List.of();
             }
         } else {
             throw new ObjectNotFoundException("Пользователь не найден, проверьте верно ли указан Id");

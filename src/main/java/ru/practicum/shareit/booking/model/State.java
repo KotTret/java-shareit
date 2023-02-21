@@ -10,7 +10,7 @@ public enum State {
 
     public static State from(String state) {
         for (State value: State.values()) {
-            if (value.name().equals(state)) {
+            if (value.name().equalsIgnoreCase(state)) {
                 return value;
             }
         }

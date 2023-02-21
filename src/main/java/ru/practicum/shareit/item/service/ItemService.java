@@ -11,7 +11,7 @@ import java.util.List;
 public interface ItemService {
 
 
-    List<ItemDtoResponseLong> getAll(Long userId);
+    List<ItemDtoResponseLong> getAll(Long userId, int from, int size);
 
     ItemDtoResponseLong get(Long itemId, Long userId);
 
@@ -19,7 +19,7 @@ public interface ItemService {
 
     ItemDtoResponseShort update(Long userId, Long itemId, ItemDtoRequest itemDto);
 
-    List<ItemDtoResponseLong> search(String text);
+    List<ItemDtoResponseLong> search(String text, int from, int size);
 
     CommentDtoResponse createComment(Long itemId, Long userId, CommentDtoRequest comment);
 }
